@@ -30,16 +30,18 @@ class IptablesFirewall
         return $out;
     }
 
+    private function loadGroups(&$groups, $newGroups)
+    {
+        foreach ($newGroups as $group) {
+            $groups[$group->getName()] = $group;
+            $this->loadGroups($groups, $group->getExtends());
+        }
+    }
+
     private function getHostGroups($host)
     {
         $groups = [];
-        // Create a collection of groups, recursively adding 'extends' groups too
-        foreach ($host->getHostGroups() as $group) {
-            $groups[$group->getName()] = $group;
-            foreach ($group->getExtends() as $extendsGroup) {
-                $groups[$extendsGroup->getName()] = $extendsGroup;
-            }
-        }
+        $this->loadGroups($groups, $host->getHostGroups());
         return $groups;
     }
 
