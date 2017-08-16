@@ -39,4 +39,6 @@ $application->setCatchExceptions(true);
 $application->add(new \Infra\Command\ConfigCommand());
 $application->add(new \Infra\Command\FirewallShowCommand());
 $application->add(new \Infra\Command\FirewallInstallCommand());
+$application->add(new \Infra\Command\GroupHostsCommand());
+$application->add(new \Infra\Command\GroupExecCommand());
 $application->run();
