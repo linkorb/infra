@@ -6,7 +6,6 @@ tmp/
 *~.nib
 local.properties
 .settings/
-infra.yml
 
 ### NetBeans ###
 nbproject/private/

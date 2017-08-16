@@ -1,0 +1,45 @@
+---
+hosts:
+  db0m:
+    public_ip: "10.0.0.101"
+    private_ip: "192.168.101"
+    public_nic: "eth0"
+    private_nic: "eth0:0"
+
+  db0s:
+    public_ip: "10.0.0.102"
+    private_ip: "192.168.102"
+    public_nic: "eth0"
+    private_nic: "eth0:0"
+
+  app0:
+    public_ip: "10.0.0.201"
+    private_ip: "192.168.201"
+    public_nic: "eth0"
+    private_nic: "eth0:0"
+
+host_groups:
+  all:
+    firewall_rules:
+      allow_dns:
+        template: "-A INPUT -p udp --sport 53 -j ACCEPT "
+
+  db-servers:
+    extends: all
+    hosts:
+      - db0m
+      - db0s
+
+    firewall_rules:
+      allow_ssh_from_app-servers:
+        remote: "group:app-servers"
+        template: "-A INPUT -i { host.public_nic } -s { remote.public_ip } --dport 22 -j ACCEPT "
+
+  app-servers:
+    extends: all
+    hosts:
+      - app0
+    firewall_rules:
+      allow_ssh_from_db-servers:
+        remote: "group:db-servers"
+        template: "-A INPUT -i { host.public_nic } -s { remote.public_ip } --dport 22 -j ACCEPT "
