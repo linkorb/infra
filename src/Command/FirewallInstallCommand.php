@@ -59,7 +59,7 @@ class FirewallInstallCommand extends Command
         }
 
         // upload
-        $remoteRulesFilename = '/etc/iptables/rules.v4';
+        $remoteRulesFilename = '/tmp/rules.v4';
         $output->writeLn("<info>Uploading new rules to {$host->getPublicIp()}:{$remoteRulesFilename}</info>");
         $res = $scp->copy(
             $tmpFilename,
@@ -68,6 +68,15 @@ class FirewallInstallCommand extends Command
         if ($scp->getExitCode()!=0) {
             throw new RuntimeException($scp->getErrorOutput());
         }
+
+        $output->writeLn("<info>Copying $remoteRulesFilename to '/etc/iptables/rules.v4'</info>");
+        $ssh->exec(["sudo cp {$remoteRulesFilename} /etc/iptables/rules.v4"]);
+        if ($ssh->getExitCode()!=0) {
+            throw new RuntimeException($ssh->getErrorOutput());
+        }
+        $output->write($ssh->getOutput());
+        $output->writeLn("<info>Done</info>");
+
 
         $output->writeLn("<info>Activating new firewall</info>");
         $ssh->exec(['sudo iptables-restore --verbose < ' . $remoteRulesFilename]);
