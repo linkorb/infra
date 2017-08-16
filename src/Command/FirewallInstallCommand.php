@@ -59,7 +59,7 @@ class FirewallInstallCommand extends Command
         }
 
         // upload
-        $remoteRulesFilename = '/tmp/iptables.rules';
+        $remoteRulesFilename = '/etc/iptables/rules.v4';
         $output->writeLn("<info>Uploading new rules to {$host->getPublicIp()}:{$remoteRulesFilename}</info>");
         $res = $scp->copy(
             $tmpFilename,
