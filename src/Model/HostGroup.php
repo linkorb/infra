@@ -8,7 +8,6 @@ class HostGroup extends BaseModel
 {
     protected $name;
     protected $description;
-    protected $extends;
     protected $hosts;
     protected $rules;
 
@@ -16,6 +15,5 @@ class HostGroup extends BaseModel
     {
         $this->hosts = new TypedArray(Host::class);
         $this->rules = new TypedArray(Rule::class);
-        $this->extends = new TypedArray(HostGroup::class);
     }
 }

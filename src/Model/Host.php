@@ -8,19 +8,24 @@ class Host extends BaseModel
 {
     protected $hostGroups;
     protected $properties;
+    protected $rules;
 
     public function __construct()
     {
         $this->hostGroups = new TypedArray(HostGroup::class);
         $this->properties = new TypedArray(Property::class);
+        $this->rules = new TypedArray(Rule::class);
     }
 
-    public function getPublicIp()
+    public function getConnectionAddress()
     {
         return (string)$this->properties->get('public_ip')->getValue();
     }
-
-    public function getAutomationUser()
+    public function getConnectionPort()
+    {
+        return 22;
+    }
+    public function getConnectionUsername()
     {
         $username = 'root';
         if ($this->properties->hasKey('automation_user')) {

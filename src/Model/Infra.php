@@ -45,7 +45,7 @@ class Infra extends BaseModel
     {
         $host = $this->getHosts()->get($hostname);
 
-        $config = new ClientConfiguration($host->getPublicIp(), $host->getAutomationUser());
+        $config = new ClientConfiguration($host->getConnectionAddress(), $host->getConnectionUsername());
         // $config->setOptions(array(
         //     'IdentityFile' => '~/.ssh/id_rsa',
         //     'IdentitiesOnly' => 'yes',

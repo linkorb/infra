@@ -28,6 +28,9 @@ class ArrayInfraLoader
                     $host->getProperties()->add($property);
                 }
             }
+            $this->loadFirewallRules($host, $hostData);
+
+
             $infra->getHosts()->add($host);
         }
 
@@ -46,19 +49,7 @@ class ArrayInfraLoader
                 }
             }
 
-            if (isset($hostGroupData['firewall_rules'])) {
-                foreach ($hostGroupData['firewall_rules'] as $ruleName => $ruleData) {
-                    $rule = new Rule();
-                    if (!$ruleName) {
-                        throw new InvalidArgumentException("Firewall rule without a name on group: " . $hostGroup->getName());
-                    }
-                    $rule->setName($ruleName);
-                    $rule->setRemote($ruleData['remote']);
-                    $rule->setTemplate($ruleData['template']);
-                    $hostGroup->getRules()->add($rule);
-                }
-            }
-
+            $this->loadFirewallRules($hostGroup, $hostGroupData);
             $infra->getHostGroups()->add($hostGroup);
         }
         // Run through host_groups again to enrich `extends` groups
@@ -71,13 +62,36 @@ class ArrayInfraLoader
                     if (!$infra->getHostGroups()->hasKey($name2)) {
                         throw new InvalidArgumentException("Host group `" . $name . '` extends `' . $name2 . '`, but that group does not exist');
                     }
+                    $extendedHostGroup = $infra->getHostGroups()->get($name2);
 
-                    $hostGroup2 = $infra->getHostGroups()->get(trim($name2));
-                    $hostGroup->getExtends()->add($hostGroup2);
+                    foreach ($hostGroup->getHosts() as $host) {
+                        $host->getHostGroups()->add($extendedHostGroup);
+                        $extendedHostGroup->getHosts()->add($host);
+                    }
                 }
             }
         }
 
         return $infra;
+    }
+
+    protected function loadFirewallRules($obj, $data)
+    {
+        if (isset($data['firewall_rules'])) {
+            foreach ($data['firewall_rules'] as $ruleName => $ruleData) {
+                $rule = new Rule();
+                if (!$ruleName) {
+                    throw new InvalidArgumentException("Firewall rule without a name on: " . $obj->getName());
+                }
+                $rule->setName($ruleName);
+                if (isset($ruleData['remote'])) {
+                    $rule->setRemote($ruleData['remote']);
+                }
+                if (isset($ruleData['template'])) {
+                    $rule->setTemplate($ruleData['template']);
+                }
+                $obj->getRules()->add($rule);
+            }
+        }
     }
 }

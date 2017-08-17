@@ -30,19 +30,9 @@ class IptablesFirewall
         return $out;
     }
 
-    private function loadGroups(&$groups, $newGroups)
-    {
-        foreach ($newGroups as $group) {
-            $groups[$group->getName()] = $group;
-            $this->loadGroups($groups, $group->getExtends());
-        }
-    }
-
     private function getHostGroups($host)
     {
-        $groups = [];
-        $this->loadGroups($groups, $host->getHostGroups());
-        return $groups;
+        return $host->getHostGroups();
     }
 
     public function generateScriptHeader()
@@ -109,32 +99,45 @@ COMMIT
     public function generateLines(Infra $infra, Host $host, $groups, $prefix)
     {
         $out = '';
+        $out .= '# ======================== Rules for host `' . $host->getName() . "` ========================\n";
+        foreach ($host->getRules() as $rule) {
+            $out .= '# host:' . $host->getName() . ':' . $rule->getName() . "\n";
+            $out .= $this->generateRuleLines($infra, $host, $rule);
+        }
+
         foreach ($groups as $hostGroup) {
             //print_r($rule);
             if (count($hostGroup->getRules())>0) {
                 $out .= '# ======================== Rules for hostgroup `' . $hostGroup->getName() . "` ========================\n";
 
                 foreach ($hostGroup->getRules() as $rule) {
-                    $out .= '# ' . $hostGroup->getName() . ':' . $rule->getName() . "\n";
-                    $data = [
-                        'host' => $host
-                    ];
-                    $remote = $rule->getRemote();
-                    $remote = str_replace('*', '', $remote);
-                    $comment = ' -m comment --comment "' . $hostGroup->getName() . ':' . $rule->getName() . '"';
-                    $comment = '';
-                    if (!$remote) {
-                        // Rule without remote. Execute as-is
-                        $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
-                    } else {
-                        // Rule with remote(s). Resolve and loop over them
-                        $remotes = $infra->getHostsByExpression($remote);
-                        foreach ($remotes as $remote) {
-                            $data['remote'] = $remote;
-                            $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
-                        }
-                    }
+                    $out .= '# group:' . $hostGroup->getName() . ':' . $rule->getName() . "\n";
+                    $out .= $this->generateRuleLines($infra, $host, $rule);
                 }
+            }
+        }
+        return $out;
+    }
+
+    protected function generateRuleLines(Infra $infra, Host $host, $rule)
+    {
+        $out = '';
+        $data = [
+            'host' => $host
+        ];
+        $remote = $rule->getRemote();
+        $remote = str_replace('*', '', $remote);
+        //$comment = ' -m comment --comment "' . $hostGroup->getName() . ':' . $rule->getName() . '"';
+        $comment = '';
+        if (!$remote) {
+            // Rule without remote. Execute as-is
+            $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
+        } else {
+            // Rule with remote(s). Resolve and loop over them
+            $remotes = $infra->getHostsByExpression($remote);
+            foreach ($remotes as $remote) {
+                $data['remote'] = $remote;
+                $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
             }
         }
         return $out;
