@@ -42,4 +42,6 @@ $application->add(new \Infra\Command\FirewallInstallCommand());
 $application->add(new \Infra\Command\GroupShowCommand());
 $application->add(new \Infra\Command\GroupExecCommand());
 $application->add(new \Infra\Command\HostShowCommand());
+$application->add(new \Infra\Command\DockerPsCommand());
+$application->add(new \Infra\Command\DockerInspectCommand());
 $application->run();

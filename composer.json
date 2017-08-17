@@ -20,6 +20,7 @@
         "linkorb/collection": "~1.0",
         "symfony/dotenv": "~3.0",
         "doctrine/inflector": "~1.0",
+        "docker-php/docker-php": "~1.0",
         "ssh-client/ssh-client": "~0.1"
     },
     "require-dev": {
