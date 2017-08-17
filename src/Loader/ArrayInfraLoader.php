@@ -20,11 +20,13 @@ class ArrayInfraLoader
         foreach ($config['hosts'] as $name => $hostData) {
             $host = new Host();
             $host->setName($name);
-            foreach ($hostData as $k=>$v) {
-                $property = new Property();
-                $property->setName($k);
-                $property->setValue($v);
-                $host->getProperties()->add($property);
+            if (isset($hostData['properties'])) {
+                foreach ($hostData['properties'] as $k=>$v) {
+                    $property = new Property();
+                    $property->setName($k);
+                    $property->setValue($v);
+                    $host->getProperties()->add($property);
+                }
             }
             $infra->getHosts()->add($host);
         }

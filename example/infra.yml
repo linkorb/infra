@@ -1,22 +1,29 @@
 ---
 hosts:
   db0m:
-    public_ip: "10.0.0.101"
-    private_ip: "192.168.101"
-    public_nic: "eth0"
-    private_nic: "eth0:0"
+    properties:
+      public_ip: "10.0.0.101"
+      private_ip: "192.168.101"
+      public_nic: "eth0"
+      private_nic: "eth0:0"
 
   db0s:
-    public_ip: "10.0.0.102"
-    private_ip: "192.168.102"
-    public_nic: "eth0"
-    private_nic: "eth0:0"
+    properties:
+      public_ip: "10.0.0.102"
+      private_ip: "192.168.102"
+      public_nic: "eth0"
+      private_nic: "eth0:0"
 
   app0:
-    public_ip: "10.0.0.201"
-    private_ip: "192.168.201"
-    public_nic: "eth0"
-    private_nic: "eth0:0"
+    properties:
+      public_ip: "10.0.0.201"
+      private_ip: "192.168.201"
+      public_nic: "eth0"
+      private_nic: "eth0:0"
+
+    firewall_rules:
+      host_rule_example:
+        template: "-A INPUT -p tcp --sport 8181 -j ACCEPT"
 
 host_groups:
   all:
