@@ -9,6 +9,7 @@ use ReflectionObject;
 use Infra\Model\Infra;
 use Infra\Model\Host;
 use Infra\Model\HostGroup;
+use Infra\Model\User;
 use Infra\Model\Rule;
 use Infra\Model\Property;
 use InvalidArgumentException;
@@ -17,6 +18,30 @@ class ArrayInfraLoader
 {
     public function load(Infra $infra, $config = [])
     {
+        if (isset($config['properties'])) {
+            foreach ($config['properties'] as $k=>$v) {
+                $property = new Property();
+                $property->setName($k);
+                $property->setValue($v);
+                $infra->getProperties()->add($property);
+            }
+        }
+
+        foreach ($config['users'] as $name => $userData) {
+            $user = new User();
+            $user->setName($name);
+            if (isset($userData['properties'])) {
+                foreach ($userData['properties'] as $k=>$v) {
+                    $property = new Property();
+                    $property->setName($k);
+                    $property->setValue($v);
+                    $user->getProperties()->add($property);
+                }
+            }
+
+            $infra->getUsers()->add($user);
+        }
+
         foreach ($config['hosts'] as $name => $hostData) {
             $host = new Host();
             $host->setName($name);
@@ -29,7 +54,13 @@ class ArrayInfraLoader
                 }
             }
             $this->loadFirewallRules($host, $hostData);
-
+            if (isset($hostData['users'])) {
+                foreach ($hostData['users'] as $username) {
+                    $user = $infra->getUsers()->get($username);
+                    $host->getUsers()->add($user);
+                    $user->getHosts()->add($host);
+                }
+            }
 
             $infra->getHosts()->add($host);
         }
@@ -50,27 +81,48 @@ class ArrayInfraLoader
             }
 
             $this->loadFirewallRules($hostGroup, $hostGroupData);
+            //$this->loadUsers($infra, $host, $hostData);
+
             $infra->getHostGroups()->add($hostGroup);
         }
-        // Run through host_groups again to enrich `extends` groups
-        foreach ($config['host_groups'] as $name => $hostGroupData) {
-            $hostGroup = $infra->getHostGroups()->get($name);
-            if (isset($hostGroupData['extends'])) {
-                $names = explode(',', $hostGroupData['extends']);
-                foreach ($names as $name2) {
-                    $name2 = trim($name2);
-                    if (!$infra->getHostGroups()->hasKey($name2)) {
-                        throw new InvalidArgumentException("Host group `" . $name . '` extends `' . $name2 . '`, but that group does not exist');
-                    }
-                    $extendedHostGroup = $infra->getHostGroups()->get($name2);
 
-                    foreach ($hostGroup->getHosts() as $host) {
-                        $host->getHostGroups()->add($extendedHostGroup);
-                        $extendedHostGroup->getHosts()->add($host);
+        // Run through host_groups a few times to enrich `extends` groups
+        for ($i=0; $i<10; $i++) {
+            foreach ($config['host_groups'] as $name => $hostGroupData) {
+                $hostGroup = $infra->getHostGroups()->get($name);
+                if (isset($hostGroupData['extends'])) {
+                    $names = explode(',', $hostGroupData['extends']);
+                    foreach ($names as $name2) {
+                        $name2 = trim($name2);
+                        if (!$infra->getHostGroups()->hasKey($name2)) {
+                            throw new InvalidArgumentException("Host group `" . $name . '` extends `' . $name2 . '`, but that group does not exist');
+                        }
+                        $extendedHostGroup = $infra->getHostGroups()->get($name2);
+
+                        foreach ($hostGroup->getHosts() as $host) {
+                            $host->getHostGroups()->add($extendedHostGroup);
+                            $extendedHostGroup->getHosts()->add($host);
+                        }
                     }
                 }
             }
         }
+
+        foreach ($config['host_groups'] as $hostGroupName => $hostGroupData) {
+            $hostGroup = $infra->getHostGroups()->get($hostGroupName);
+            if (isset($hostGroupData['users'])) {
+                foreach ($hostGroupData['users'] as $username) {
+                    $user = $infra->getUsers()->get($username);
+                    foreach ($infra->getHosts() as $host) {
+                        if ($host->getHostGroups()->hasKey($hostGroupName)) {
+                            $host->getUsers()->add($user);
+                            $user->getHosts()->add($host);
+                        }
+                    }
+                }
+            }
+        }
+
 
         return $infra;
     }
@@ -94,4 +146,5 @@ class ArrayInfraLoader
             }
         }
     }
+
 }

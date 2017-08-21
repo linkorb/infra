@@ -44,4 +44,6 @@ $application->add(new \Infra\Command\GroupExecCommand());
 $application->add(new \Infra\Command\HostShowCommand());
 $application->add(new \Infra\Command\DockerPsCommand());
 $application->add(new \Infra\Command\DockerInspectCommand());
+$application->add(new \Infra\Command\UserListCommand());
+$application->add(new \Infra\Command\UserShowCommand());
 $application->run();

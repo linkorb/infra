@@ -48,9 +48,16 @@ class HostShowCommand extends Command
             $output->writeLn("  - {$p->getName()}={$p->getValue()}");
         }
         $output->writeLn("<info>Rules:</info>");
-        foreach ($hostGroup->getRules() as $r) {
+        foreach ($host->getRules() as $r) {
             $output->writeLn(
                 "  - " . $r->getName() . " (" . $r->getRemote() . ") " . $r->getTemplate()
+            );
+        }
+
+        $output->write("<info>Users:</info>");
+        foreach ($host->getUsers() as $u) {
+            $output->write(
+                " " . $u->getName()
             );
         }
         $output->writeLn("");

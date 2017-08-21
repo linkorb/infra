@@ -9,12 +9,14 @@ class Host extends BaseModel
     protected $hostGroups;
     protected $properties;
     protected $rules;
+    protected $users;
 
     public function __construct()
     {
         $this->hostGroups = new TypedArray(HostGroup::class);
         $this->properties = new TypedArray(Property::class);
         $this->rules = new TypedArray(Rule::class);
+        $this->users = new TypedArray(User::class);
     }
 
     public function getConnectionAddress()
@@ -33,4 +35,5 @@ class Host extends BaseModel
         }
         return $username;
     }
+
 }

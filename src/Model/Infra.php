@@ -10,15 +10,19 @@ use SSHClient\ClientBuilder\ClientBuilder;
 
 class Infra extends BaseModel
 {
-    protected $firewallRules;
     protected $hosts;
     protected $hostGroups;
+    protected $firewallRules;
+    protected $users;
+    protected $properties;
 
     public function __construct()
     {
-        $this->firewallRules = new TypedArray(FirewallRule::class);
         $this->hosts = new TypedArray(Host::class);
         $this->hostGroups = new TypedArray(HostGroup::class);
+        $this->properties = new TypedArray(Property::class);
+        $this->firewallRules = new TypedArray(FirewallRule::class);
+        $this->users = new TypedArray(User::class);
     }
 
     public function getHostsByExpression($expression)
@@ -52,5 +56,32 @@ class Infra extends BaseModel
         // ));
         $builder = new ClientBuilder($config);
         return $builder;
+    }
+
+    public function copyTemplate($hostname, $template, $destination)
+    {
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../../templates');
+        $twig = new \Twig_Environment($loader, []);
+        $host = $this->getHosts()->get($hostname);
+        $data = [];
+        $data['host'] = $host;
+        $data['infra'] = $this;
+
+        $tmpfile = tempnam(sys_get_temp_dir(), 'infra_');
+
+        $content = $twig->render($template, $data);
+        file_put_contents($tmpfile, $content);
+
+        $scpBuilder = $this->getSshBuilder($hostname);
+        $scp = $scpBuilder->buildSecureCopyClient();
+        $scp->copy(
+            $tmpfile,
+            $scp->getRemotePath($destination)
+        );
+        if ($scp->getExitCode()!=0) {
+            throw new RuntimeException($scp->getErrorOutput());
+        }
+
+        unlink($tmpfile);
     }
 }

@@ -17,4 +17,13 @@ class BaseModel implements Identifiable
     {
         return $this->name;
     }
+
+    public function getPropertyValue($name)
+    {
+        $value = null;
+        if (isset($this->properties[$name])) {
+            $value = $this->properties[$name]->getValue();
+        }
+        return $value;
+    }
 }
