@@ -100,17 +100,17 @@ COMMIT
     {
         $out = '';
         $out .= '# ======================== Rules for host `' . $host->getName() . "` ========================\n";
-        foreach ($host->getRules() as $rule) {
+        foreach ($host->getFirewallRules() as $rule) {
             $out .= '# host:' . $host->getName() . ':' . $rule->getName() . "\n";
             $out .= $this->generateRuleLines($infra, $host, $rule);
         }
 
         foreach ($groups as $hostGroup) {
             //print_r($rule);
-            if (count($hostGroup->getRules())>0) {
+            if (count($hostGroup->getFirewallRules())>0) {
                 $out .= '# ======================== Rules for hostgroup `' . $hostGroup->getName() . "` ========================\n";
 
-                foreach ($hostGroup->getRules() as $rule) {
+                foreach ($hostGroup->getFirewallRules() as $rule) {
                     $out .= '# group:' . $hostGroup->getName() . ':' . $rule->getName() . "\n";
                     $out .= $this->generateRuleLines($infra, $host, $rule);
                 }
@@ -127,6 +127,7 @@ COMMIT
         ];
         $remote = $rule->getRemote();
         $remote = str_replace('*', '', $remote);
+        $prefix = '';
         //$comment = ' -m comment --comment "' . $hostGroup->getName() . ':' . $rule->getName() . '"';
         $comment = '';
         if (!$remote) {

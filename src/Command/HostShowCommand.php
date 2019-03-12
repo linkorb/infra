@@ -48,7 +48,7 @@ class HostShowCommand extends Command
             $output->writeLn("  - {$p->getName()}={$p->getValue()}");
         }
         $output->writeLn("<info>Rules:</info>");
-        foreach ($host->getRules() as $r) {
+        foreach ($host->getFirewallRules() as $r) {
             $output->writeLn(
                 "  - " . $r->getName() . " (" . $r->getRemote() . ") " . $r->getTemplate()
             );

@@ -2,7 +2,7 @@
 
 namespace Infra\Model;
 
-class Rule extends BaseModel
+class FirewallRule extends BaseModel
 {
     protected $name;
     protected $remote;

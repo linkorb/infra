@@ -10,7 +10,7 @@ use Infra\Model\Infra;
 use Infra\Model\Host;
 use Infra\Model\HostGroup;
 use Infra\Model\User;
-use Infra\Model\Rule;
+use Infra\Model\FirewallRule;
 use Infra\Model\Property;
 use InvalidArgumentException;
 
@@ -27,7 +27,7 @@ class ArrayInfraLoader
             }
         }
 
-        foreach ($config['users'] as $name => $userData) {
+        foreach ($config['users'] ?? [] as $name => $userData) {
             $user = new User();
             $user->setName($name);
             if (isset($userData['properties'])) {
@@ -130,8 +130,8 @@ class ArrayInfraLoader
     protected function loadFirewallRules($obj, $data)
     {
         if (isset($data['firewall_rules'])) {
-            foreach ($data['firewall_rules'] as $ruleName => $ruleData) {
-                $rule = new Rule();
+            foreach($data['firewall_rules'] as $ruleName => $ruleData) {
+                $rule = new FirewallRule();
                 if (!$ruleName) {
                     throw new InvalidArgumentException("Firewall rule without a name on: " . $obj->getName());
                 }
@@ -142,7 +142,7 @@ class ArrayInfraLoader
                 if (isset($ruleData['template'])) {
                     $rule->setTemplate($ruleData['template']);
                 }
-                $obj->getRules()->add($rule);
+                $obj->getFirewallRules()->add($rule);
             }
         }
     }

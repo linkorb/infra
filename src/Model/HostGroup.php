@@ -9,11 +9,11 @@ class HostGroup extends BaseModel
     protected $name;
     protected $description;
     protected $hosts;
-    protected $rules;
+    protected $firewallRules;
 
     public function __construct()
     {
         $this->hosts = new TypedArray(Host::class);
-        $this->rules = new TypedArray(Rule::class);
+        $this->firewallRules = new TypedArray(FirewallRule::class);
     }
 }

@@ -8,14 +8,14 @@ class Host extends BaseModel
 {
     protected $hostGroups;
     protected $properties;
-    protected $rules;
+    protected $firewallRules;
     protected $users;
 
     public function __construct()
     {
         $this->hostGroups = new TypedArray(HostGroup::class);
         $this->properties = new TypedArray(Property::class);
-        $this->rules = new TypedArray(Rule::class);
+        $this->firewallRules = new TypedArray(FirewallRule::class);
         $this->users = new TypedArray(User::class);
     }
 
