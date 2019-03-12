@@ -32,6 +32,10 @@ class UserListCommand extends Command
 
         foreach ($infra->getUsers() as $user) {
             $output->writeLn("  <comment>" . $user->getName() . "</comment>");
+            $output->writeLn("    ssh username: " . $user->getSshUsername() . " key: " . $user->getSshPublicKey());
+            $output->writeLn("    github: " . $user->getGithubUsername());
+            $output->writeLn("    image: " . $user->getImageUrl());
+            
         }
         $output->writeLn("");
     }

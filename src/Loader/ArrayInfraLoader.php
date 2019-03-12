@@ -10,6 +10,7 @@ use Infra\Model\Infra;
 use Infra\Model\Host;
 use Infra\Model\HostGroup;
 use Infra\Model\User;
+use Infra\Model\UserGroup;
 use Infra\Model\FirewallRule;
 use Infra\Model\Property;
 use InvalidArgumentException;
@@ -30,6 +31,12 @@ class ArrayInfraLoader
         foreach ($config['users'] ?? [] as $name => $userData) {
             $user = new User();
             $user->setName($name);
+            $user->setSshUsername($userData['ssh_username'] ?? null);
+            $user->setSshPublicKey($userData['ssh_public_key'] ?? null);
+            $user->setGithubUsername($userData['github_username'] ?? null);
+            $user->setImageUrl($userData['image_url'] ?? null);
+            
+            
             if (isset($userData['properties'])) {
                 foreach ($userData['properties'] as $k=>$v) {
                     $property = new Property();

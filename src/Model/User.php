@@ -7,6 +7,11 @@ use Collection\TypedArray;
 class User extends BaseModel
 {
     protected $name;
+    protected $sshUsername;
+    protected $sshPublicKey;
+    protected $githubUsername;
+    protected $imageUrl;
+    
     protected $hosts;
     protected $properties;
 
