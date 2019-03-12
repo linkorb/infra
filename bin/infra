@@ -46,4 +46,6 @@ $application->add(new \Infra\Command\DockerPsCommand());
 $application->add(new \Infra\Command\DockerInspectCommand());
 $application->add(new \Infra\Command\UserListCommand());
 $application->add(new \Infra\Command\UserShowCommand());
+$application->add(new \Infra\Command\UserGroupListCommand());
+$application->add(new \Infra\Command\UserGroupShowCommand());
 $application->run();

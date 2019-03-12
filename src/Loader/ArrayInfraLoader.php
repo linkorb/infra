@@ -42,6 +42,20 @@ class ArrayInfraLoader
             $infra->getUsers()->add($user);
         }
 
+        foreach ($config['user_groups'] ?? [] as $name => $userGroupData) {
+            $userGroup = new UserGroup();
+            $userGroup->setName($name);
+            
+            if (isset($userGroupData['properties'])) {
+                foreach ($userGroupData['properties'] as $k=>$v) {
+                    $property = new Property();
+                    $property->setName($k);
+                    $property->setValue($v);
+                    $userGroup->getProperties()->add($property);
+                }
+            }
+            $infra->getUserGroups()->add($userGroup);
+        }
         foreach ($config['hosts'] as $name => $hostData) {
             $host = new Host();
             $host->setName($name);

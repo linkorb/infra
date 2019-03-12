@@ -14,6 +14,7 @@ class Infra extends BaseModel
     protected $hostGroups;
     protected $firewallRules;
     protected $users;
+    protected $userGroups;
     protected $properties;
 
     public function __construct()
@@ -23,6 +24,7 @@ class Infra extends BaseModel
         $this->properties = new TypedArray(Property::class);
         $this->firewallRules = new TypedArray(FirewallRule::class);
         $this->users = new TypedArray(User::class);
+        $this->userGroups = new TypedArray(UserGroup::class);
     }
 
     public function getHostsByExpression($expression)
