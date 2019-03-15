@@ -1,0 +1,41 @@
+query {
+    echo(message: "Hello World")
+    host(name: "app0") {
+        name
+        fqdn
+        publicIp
+        description
+        localHostGroups {
+            name
+        }
+        hostGroups {
+            name
+            description
+            parentHostGroup {
+                name
+            }
+            hosts {
+                name
+            }
+        }
+    }
+    firewallRule(name: "myFirewallRule") {
+        name
+        template
+        remote
+
+        hosts {
+            name
+        }
+    }
+    user(name: "torvalds") {
+        name
+        hosts {
+            name
+            publicIp
+        }
+    }
+    allHost {
+        name
+    }
+}

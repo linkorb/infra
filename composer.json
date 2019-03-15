@@ -22,7 +22,8 @@
         "symfony/dotenv": "~3.0",
         "doctrine/inflector": "~1.0",
         "docker-php/docker-php": "~1.0",
-        "ssh-client/ssh-client": "~0.1"
+        "ssh-client/ssh-client": "~0.1",
+        "webonyx/graphql-php": "^0.13.1"
     },
     "require-dev": {
         "linkorb/autotune": "~1.0"
