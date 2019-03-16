@@ -71,17 +71,18 @@ class GetCommand extends AbstractCommand
         }
 
         $value = $resource[$propertyName];
-        if (is_string($value)) {
+        if (is_string($value) || is_numeric($value)) {
             $output->writeLn($value);
             return;
         }
         if (is_array($value)) {
             foreach ($value as $k=>$v) {
                 if (is_string($v)) {
-                    $output->writeLn($value);
-                }
-                if (is_a($v, ResourceInterface::class)) {
-                    $output->writeLn($v->getName());
+                    $output->writeLn($v);
+                } else {
+                    if (is_a($v, ResourceInterface::class)) {
+                        $output->writeLn($v->getName());
+                    }
                 }
             }
             return;
