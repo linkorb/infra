@@ -37,6 +37,20 @@ class HostGroupResource extends AbstractResource
         return $hostGroups;
     }
 
+    public function getChildHostGroups()
+    {
+        $res = [];
+        foreach ($this->infra->getResourcesByType('HostGroup') as $hostGroup) {
+            $parentHostGroup = $hostGroup->getParentHostGroup();
+            if ($parentHostGroup) {
+                if ($parentHostGroup->getName() == $this->getName()) {
+                    $res[] = $hostGroup;
+                }
+            }
+        }
+        return $res;
+    }
+
     public function getParentHostGroup()
     {
         $name = $this->spec['parentHostGroup'] ?? null;

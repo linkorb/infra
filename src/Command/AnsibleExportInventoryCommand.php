@@ -33,6 +33,9 @@ class AnsibleExportInventoryCommand extends AbstractCommand
             foreach ($hostGroup->getHosts() as $host) {
                 $data[$hostGroup->getName()]['hosts'][] = $host->getName();
             }
+            foreach ($hostGroup->getChildHostGroups() as $childHostGroup) {
+                $data[$hostGroup->getName()]['children'][] = $childHostGroup->getName();
+            }
         }
         $hostvars = [];
         foreach ($infra->getResourcesByType('Host') as $host) {
