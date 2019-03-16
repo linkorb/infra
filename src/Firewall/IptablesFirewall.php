@@ -101,7 +101,7 @@ COMMIT
         $out = '';
         // $out .= '# ======================== Rules for host `' . $host->getName() . "` ========================\n";
         foreach ($host->getFirewallRules() as $rule) {
-            $out .= "\n# rule=" . $rule->getName() . " hosts=" . $rule->getHostsAsString() . " remoteHosts=" . $rule->getRemoteHostsAsString() . "\n";
+            $out .= "\n# rule=" . $rule->getName() . " hosts='" . $rule->getHostsAsString() . "' remoteHosts='" . $rule->getRemoteHostsAsString() . "'\n";
             $out .= $this->generateRuleLines($infra, $host, $rule);
         }
 
@@ -130,11 +130,12 @@ COMMIT
         // $comment = '';
         if (count($remoteHosts)==0) {
             // Rule without remote. Execute as-is
+            $comment = " -m comment --comment \"host='" . $host->getName() . "' rule='" . $rule->getName() . "'\"";
             $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
         } else {
             // Rule with remote(s). loop over them
             foreach ($remoteHosts as $remoteHost) {
-                $comment = ' -m comment --comment "host=' . $host->getName() . ' remoteHost=' . $remoteHost->getName() . ' rule=' . $rule->getName() . '"';
+                $comment = " -m comment --comment \"host='" . $host->getName() . "' remoteHost='" . $remoteHost->getName() . "' rule='" . $rule->getName() . "'\"";
                 $data['remote'] = $remoteHost;
                 $data['remoteHost'] = $remoteHost;
                 $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
