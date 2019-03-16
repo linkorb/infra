@@ -27,7 +27,7 @@ class HostResource extends AbstractResource
 
     public function getSshUsername()
     {
-        return 'root';
+        return $this->spec['sshUsername'] ?? null;
     }
 
     public function getLocalHostGroupNames(): array
