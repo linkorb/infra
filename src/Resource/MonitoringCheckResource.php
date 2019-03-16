@@ -28,6 +28,15 @@ class MonitoringCheckResource extends AbstractResource
         return $this->spec['command'] ?? null;
     }
 
+    public function getSubscribers()
+    {
+        $hosts = $this->spec['hosts'] ?? null;
+        if (is_array($hosts)) {
+            $hosts = implode(', ', $hosts);
+        }
+        return explode(',', $hosts);
+    }
+
 
     public function getInterval()
     {
