@@ -4,6 +4,7 @@ namespace Infra\Resource;
 
 use Infra\Infra;
 use ArrayAccess;
+use RuntimeException;
 
 abstract class AbstractResource implements ResourceInterface
 {
@@ -22,7 +23,11 @@ abstract class AbstractResource implements ResourceInterface
     {
         $resource = new static($infra);
         $resource->typeName = $config['kind'];
-        $resource->name = $config['metadata']['name'];
+        $metadata = $config['metadata'] ?? [];
+        $resource->name = $metadata['name'] ?? null;
+        if (!$resource->name) {
+            throw new RuntimeException("No name specified in resource config");
+        }
         $resource->description = $config['metadata']['description'] ?? null;
         $resource->spec = $config['spec'];
         return $resource;
