@@ -127,6 +127,9 @@ class Infra
 
     public function getResource(string $typeName, string $name): ?ResourceInterface
     {
+        if (!$this->hasResource($typeName, $name)) {
+            throw new Exception\UnknownResourceException("$typeName/$name");
+        }
         $typeResources = $this->getResourcesByType($typeName);
         return $typeResources[$name] ?? null;
     }
