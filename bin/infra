@@ -36,13 +36,13 @@ if (file_exists($filename)) {
 
 $application = new Application('Infra', '1.0.0');
 $application->setCatchExceptions(false);
-$application->add(new \Infra\Command\FirewallShowCommand());
-$application->add(new \Infra\Command\FirewallInstallCommand());
-$application->add(new \Infra\Command\DockerPsCommand());
-$application->add(new \Infra\Command\DockerInspectCommand());
-$application->add(new \Infra\Command\HostExecCommand());
-$application->add(new \Infra\Command\HostInstallSensuCommand());
-$application->add(new \Infra\Command\HostUpdateUsersCommand());
 $application->add(new \Infra\Command\GetCommand());
 $application->add(new \Infra\Command\QueryCommand());
+$application->add(new \Infra\Command\HostExecCommand());
+$application->add(new \Infra\Command\FirewallShowCommand());
+$application->add(new \Infra\Command\FirewallInstallCommand());
+// $application->add(new \Infra\Command\DockerPsCommand());
+// $application->add(new \Infra\Command\DockerInspectCommand());
+// $application->add(new \Infra\Command\HostInstallSensuCommand());
+// $application->add(new \Infra\Command\HostUpdateUsersCommand());
 $application->run();
