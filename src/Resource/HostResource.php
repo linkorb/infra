@@ -15,6 +15,11 @@ class HostResource extends AbstractResource
         return $this->spec['publicIp'] ?? null;
     }
 
+    public function getPrivateIp()
+    {
+        return $this->spec['privateIp'] ?? null;
+    }
+
     public function getSshAddress()
     {
         return $this->getPublicIp();
