@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Infra\Resource\ResourceInterface;
 use Infra\Infra;
 
 class GetCommand extends AbstractCommand
@@ -27,6 +28,11 @@ class GetCommand extends AbstractCommand
                 InputArgument::OPTIONAL,
                 'Resource Name'
             )
+            ->addArgument(
+                'propertyName',
+                InputArgument::OPTIONAL,
+                'Property Name'
+            )
         ;
     }
 
@@ -34,6 +40,7 @@ class GetCommand extends AbstractCommand
     {
         $typeName = $input->getArgument('typeName');
         $resourceName = $input->getArgument('resourceName');
+        $propertyName = $input->getArgument('propertyName');
         $infra = $this->infra;
         if (!$typeName) {
             foreach($infra->getTypeNames() as $typeName) {
@@ -41,7 +48,7 @@ class GetCommand extends AbstractCommand
                 $output->writeLn(' * <info>' . $typeName . '</info> (' . implode(', ', $aliases) . ')');
                 // print_r($aliases);
             }
-            exit(0);
+            return;
         }
         
         $typeName = $infra->getCanonicalTypeName($typeName);
@@ -54,11 +61,31 @@ class GetCommand extends AbstractCommand
             foreach ($resources as $resource) {
                 $output->writeLn(" * " . $resource->getName());
             }
-            exit(0);
+            return;
+        }
+        $resource = $infra->getResource($typeName, $resourceName);
+        if (!$propertyName) {
+            $yaml = Yaml::dump($resource->serialize(), 10, 2);
+            $output->write($yaml);
+            return;
         }
 
-        $resource = $infra->getResource($typeName, $resourceName);
-        $yaml = Yaml::dump($resource->serialize(), 10, 2);
-        $output->write($yaml);
+        $value = $resource[$propertyName];
+        if (is_string($value)) {
+            $output->writeLn($value);
+            return;
+        }
+        if (is_array($value)) {
+            foreach ($value as $k=>$v) {
+                if (is_string($v)) {
+                    $output->writeLn($value);
+                }
+                if (is_a($v, ResourceInterface::class)) {
+                    $output->writeLn($v->getName());
+                }
+            }
+            return;
+        }
+        exit("Unsupported property type...\n");
     }
 }
