@@ -34,6 +34,11 @@ class Infra
         ]);
     }
 
+    public function getInflector()
+    {
+        return $this->inflector;
+    }
+
     public function getSchema()
     {
         return $this->schema;
