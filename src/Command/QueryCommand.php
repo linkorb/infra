@@ -1,10 +1,6 @@
 <?php
 
 namespace Infra\Command;
-
-use RuntimeException;
-
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +11,7 @@ use Infra\Infra;
 use GraphQL\GraphQL;
 use GraphQL\Error\Debug;
 
-class QueryCommand extends Command
+class QueryCommand extends AbstractCommand
 {
     public function configure()
     {

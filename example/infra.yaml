@@ -14,16 +14,25 @@ metadata:
   description: Some cool db0m host
 spec:
   os: Ubuntu 16.04
-  publicIp: "10.0.0.1"
+  publicIp: "20.0.0.1"
+  hostGroups: prod-east
+---
+kind: Host
+metadata:
+  name: db0s
+  description: Some cool db0s host
+spec:
+  os: Ubuntu 16.04
+  publicIp: "20.0.0.2"
   hostGroups: prod-east
 ---
 kind: FirewallRule
 metadata:
   name: myFirewallRule
 spec:
-  hosts: prod
-  remote: 192.168.178.1
-  template: "-A INPUT -p tcp --dport 22 -j ACCEPT"
+  hosts: app0
+  remoteHosts: prod-east
+  template: "-A INPUT -d { host.publicIp } -s { remoteHost.publicIp } -p tcp --dport 3306 -j ACCEPT"
 ---
 kind: HostGroup
 metadata:

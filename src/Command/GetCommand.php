@@ -3,8 +3,6 @@
 namespace Infra\Command;
 
 use RuntimeException;
-
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Infra\Infra;
 
-class GetCommand extends Command
+class GetCommand extends AbstractCommand
 {
     public function configure()
     {

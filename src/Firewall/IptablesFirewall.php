@@ -2,16 +2,16 @@
 
 namespace Infra\Firewall;
 
-use Infra\Model\Infra;
-use Infra\Model\Host;
-use Infra\Model\Group;
-use Infra\Model\Rule;
+use Infra\Infra;
+use Infra\Resource\HostResource;
+use Infra\Resource\HostGroupResource;
+use Infra\Resource\FirewallRuleResource;
 use RuntimeException;
 
 class IptablesFirewall
 {
     protected $iptables = '/sbin/iptables';
-    public function generateScript(Infra $infra, Host $host)
+    public function generateScript(Infra $infra, HostResource $host)
     {
         $out = '# Firewall script generated on ' . date('Y-m-d H:i') . " for " . $host->getName() . "\n";
         $out .= $this->generateScriptHeader();
@@ -20,13 +20,13 @@ class IptablesFirewall
         return $out;
     }
 
-    public function generateRules(Infra $infra, Host $host)
+    public function generateRules(Infra $infra, HostResource $host)
     {
         $out = '# Firewall rules generated on ' . date('Y-m-d H:i') . " for " . $host->getName() . "\n";
         $out .= $this->generateRulesHeader();
         $groups = $this->getHostGroups($host);
         $out .= $this->generateLines($infra, $host, $groups, '');
-        $out .= "COMMIT\n";
+        $out .= "\nCOMMIT\n";
         return $out;
     }
 
@@ -96,48 +96,47 @@ COMMIT
     }
 
 
-    public function generateLines(Infra $infra, Host $host, $groups, $prefix)
+    public function generateLines(Infra $infra, HostResource $host, $groups, $prefix)
     {
         $out = '';
-        $out .= '# ======================== Rules for host `' . $host->getName() . "` ========================\n";
+        // $out .= '# ======================== Rules for host `' . $host->getName() . "` ========================\n";
         foreach ($host->getFirewallRules() as $rule) {
-            $out .= '# host:' . $host->getName() . ':' . $rule->getName() . "\n";
+            $out .= "\n# rule=" . $rule->getName() . " hosts=" . $rule->getHostsAsString() . " remoteHosts=" . $rule->getRemoteHostsAsString() . "\n";
             $out .= $this->generateRuleLines($infra, $host, $rule);
         }
 
-        foreach ($groups as $hostGroup) {
-            //print_r($rule);
-            if (count($hostGroup->getFirewallRules())>0) {
-                $out .= '# ======================== Rules for hostgroup `' . $hostGroup->getName() . "` ========================\n";
+        // foreach ($groups as $hostGroup) {
+        //     //print_r($rule);
+        //     if (count($hostGroup->getFirewallRules())>0) {
+        //         $out .= '# ======================== Rules for hostgroup `' . $hostGroup->getName() . "` ========================\n";
 
-                foreach ($hostGroup->getFirewallRules() as $rule) {
-                    $out .= '# group:' . $hostGroup->getName() . ':' . $rule->getName() . "\n";
-                    $out .= $this->generateRuleLines($infra, $host, $rule);
-                }
-            }
-        }
+        //         foreach ($hostGroup->getFirewallRules() as $rule) {
+        //             $out .= '# group:' . $hostGroup->getName() . ':' . $rule->getName() . "\n";
+        //             $out .= $this->generateRuleLines($infra, $host, $rule);
+        //         }
+        //     }
+        // }
         return $out;
     }
 
-    protected function generateRuleLines(Infra $infra, Host $host, $rule)
+    protected function generateRuleLines(Infra $infra, HostResource $host, $rule)
     {
         $out = '';
         $data = [
             'host' => $host
         ];
-        $remote = $rule->getRemote();
-        $remote = str_replace('*', '', $remote);
+        $remoteHosts = $rule->getRemoteHosts();
         $prefix = '';
-        //$comment = ' -m comment --comment "' . $hostGroup->getName() . ':' . $rule->getName() . '"';
-        $comment = '';
-        if (!$remote) {
+        // $comment = '';
+        if (count($remoteHosts)==0) {
             // Rule without remote. Execute as-is
             $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
         } else {
-            // Rule with remote(s). Resolve and loop over them
-            $remotes = $infra->getHostsByExpression($remote);
-            foreach ($remotes as $remote) {
-                $data['remote'] = $remote;
+            // Rule with remote(s). loop over them
+            foreach ($remoteHosts as $remoteHost) {
+                $comment = ' -m comment --comment "host=' . $host->getName() . ' remoteHost=' . $remoteHost->getName() . ' rule=' . $rule->getName() . '"';
+                $data['remote'] = $remoteHost;
+                $data['remoteHost'] = $remoteHost;
                 $out .= trim($prefix . ' ' . $this->processTemplate($rule->getTemplate(), $data)) . "$comment\n";
             }
         }
@@ -161,12 +160,11 @@ COMMIT
                 throw new RuntimeException("Undefined variable: " . $variableName);
             }
             $host = $data[$variableName];
-            if ($host->getProperties()->hasKey($propertyName)) {
-                $v = $host->getProperties()->get($propertyName)->getValue();
+            if (isset($host[$propertyName])) {
+                $v = $host[$propertyName];
                 $template = str_replace($m, $v, $template);
             } else {
-                //$this->addWarning("Host " . $host->getName() . ' doesn)
-                return null;
+                throw new RuntimeException("Host " . $host->getName() . ' does not have property ' . $propertyName);
             }
         }
         $out .= $template . "\n";

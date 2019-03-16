@@ -8,8 +8,10 @@ use Infra\Resource\ResourceInterface;
 use Infra\Resource\AbstractResource;
 use Symfony\Component\Yaml\Yaml;
 use Infra\Exception;
-use Infra\Resource;
+use Infra\Resource\HostResource;
 use Doctrine\Common\Inflector\Inflector;
+use SSHClient\ClientConfiguration\ClientConfiguration;
+use SSHClient\ClientBuilder\ClientBuilder;
 
 class Infra
 {
@@ -175,7 +177,7 @@ class Infra
         if ($this->hasResource('Host', $name)) {
             return [$this->getResource('Host', $name)];
         }
-        throw new RuntimeException("Unknown host or hostgroup name: " . $name);
+        throw new Exception\UnknownHostsException($name);
     }
 
     /** 
@@ -193,7 +195,7 @@ class Infra
             }
         }
         if (!is_array($names)) {
-            throw new RuntimeException("undefined type passed to infra getHosts");
+            throw new RuntimeException("undefined type (not string or array) passed to infra getHosts");
         }
         $res = [];
         foreach ($names as $i=>$name) {
@@ -203,5 +205,38 @@ class Infra
             }
         }
         return $res;
+    }
+
+    public function getSshBuilder(HostResource $host)
+    {
+        $config = new ClientConfiguration($host->getSshAddress(), $host->getSshUsername());
+        // $config->setOptions(array(
+        //     'IdentityFile' => '~/.ssh/id_rsa',
+        //     'IdentitiesOnly' => 'yes',
+        // ));
+        $builder = new ClientBuilder($config);
+        return $builder;
+    }
+
+    public function copyTemplate(HostResource $host, $template, $destination)
+    {
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../../templates');
+        $twig = new \Twig_Environment($loader, []);
+        $data = [];
+        $data['host'] = $host;
+        $data['infra'] = $this;
+        $tmpfile = tempnam(sys_get_temp_dir(), 'infra_');
+        $content = $twig->render($template, $data);
+        file_put_contents($tmpfile, $content);
+        $scpBuilder = $this->getSshBuilder($host);
+        $scp = $scpBuilder->buildSecureCopyClient();
+        $scp->copy(
+            $tmpfile,
+            $scp->getRemotePath($destination)
+        );
+        if ($scp->getExitCode()!=0) {
+            throw new RuntimeException($scp->getErrorOutput());
+        }
+        unlink($tmpfile);
     }
 }

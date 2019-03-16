@@ -4,9 +4,7 @@ namespace Infra\Command;
 
 use RuntimeException;
 
-use Infra\Model\Infra;
-use Infra\Loader\AutoInfraLoader;
-use Symfony\Component\Console\Command\Command;
+use Infra\Infra;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,29 +12,28 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Infra\Firewall\IptablesFirewall;
 
-class FirewallShowCommand extends Command
+class FirewallShowCommand extends AbstractCommand
 {
     public function configure()
     {
         $this->setName('firewall:show')
             ->setDescription('Show firewall for given host')
             ->addArgument(
-                'host',
+                'hosts',
                 InputArgument::REQUIRED,
-                'Name of the host'
+                'Name of the hosts'
             )
         ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $hostName = $input->getArgument('host');
-        $loader = new AutoInfraLoader();
-        $infra = $loader->load();
-        $host = $infra->getHosts()->get($hostName);
+        $hosts = $this->infra->getHosts($input->getArgument('hosts'));
 
-        $firewall = new IptablesFirewall();
-        $script = $firewall->generateRules($infra, $host);
-        echo $script;
+        foreach ($hosts as $host) {
+            $firewall = new IptablesFirewall();
+            $script = $firewall->generateRules($this->infra, $host);
+            $output->writeLn($script);
+        }
     }
 }

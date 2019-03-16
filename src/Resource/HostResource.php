@@ -15,6 +15,16 @@ class HostResource extends AbstractResource
         return $this->spec['publicIp'] ?? null;
     }
 
+    public function getSshAddress()
+    {
+        return $this->getPublicIp();
+    }
+
+    public function getSshUsername()
+    {
+        return 'root';
+    }
+
     public function getLocalHostGroupNames(): array
     {
         $hostGroups = $this->spec['hostGroups'];
@@ -72,6 +82,21 @@ class HostResource extends AbstractResource
             }
         }
         return false;
+    }
+
+    public function getFirewallRules()
+    {
+        $rules = $this->infra->getResourcesByType('FirewallRule');
+        $res = [];
+        foreach ($rules as $rule) {
+            $hosts = $rule->getHosts();
+            foreach ($hosts as $host) {
+                if ($host->getName() == $this->getName()) {
+                    $res[$rule->getName()] = $rule;
+                }
+            }
+        }
+        return $res;
     }
 
     public static function getConfig(Infra $infra)
