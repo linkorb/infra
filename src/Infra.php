@@ -174,6 +174,15 @@ class Infra
         throw new RuntimeException("Unknown infra config location: " . $location);
     }
 
+    public function validate()
+    {
+        foreach ($this->getResourcesByType('Host') as $host) {
+            if ($this->hasResource('HostGroup', $host->getName())) {
+                throw new RuntimeException("Host with same name as a HostGroup detected: " . $host->getName());
+            }
+        }
+    }
+
     public function loadFile(string $filename): void
     {
         if (!file_exists($filename)) {

@@ -26,5 +26,6 @@ abstract class AbstractCommand extends Command
             throw new RuntimeException("INFRA_CONFIG environment variable is undefined");
         }
         $this->infra->load($infraConfig);
+        $this->infra->validate();
     }
 }
