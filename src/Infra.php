@@ -27,6 +27,7 @@ class Infra
         $this->registerType(Resource\HostGroupResource::class);
         $this->registerType(Resource\FirewallRuleResource::class);
         $this->registerType(Resource\UserResource::class);
+        $this->registerType(Resource\MonitoringCheckResource::class);
         $this->registerType(Resource\QueryResource::class);
         $this->inflector = new Inflector();
 
