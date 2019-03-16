@@ -124,7 +124,7 @@ class Infra
         return $this->resources[$typeName] ?? [];
     }
 
-    public function getResource(string $typeName, string $name): ResourceInterface
+    public function getResource(string $typeName, string $name): ?ResourceInterface
     {
         $typeResources = $this->getResourcesByType($typeName);
         return $typeResources[$name] ?? null;
