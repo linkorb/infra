@@ -12,6 +12,7 @@ use Infra\Resource\HostResource;
 use Doctrine\Common\Inflector\Inflector;
 use SSHClient\ClientConfiguration\ClientConfiguration;
 use SSHClient\ClientBuilder\ClientBuilder;
+use RuntimeException;
 
 class Infra
 {
@@ -144,6 +145,32 @@ class Infra
     // {
     //     return $this->resources;
     // }
+
+    private function rglob($pattern, $flags = 0) {
+        $files = glob($pattern, $flags); 
+        foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+            $files = array_merge($files, $this->rglob($dir.'/'.basename($pattern), $flags));
+        }
+        return $files;
+    }
+
+    public function load(string $location)
+    {
+        if (is_file($location)) {
+            $this->loadFile($location);
+            return true;
+        }
+        if (is_dir($location)) {
+            $filenames = $this->rglob($location . '/*.yaml');
+            // print_r($filenames); exit();
+            // return $this->loadFile($location);/
+            foreach ($filenames as $filename) {
+                $this->loadFile($filename);
+            }
+        }
+        return true;
+        throw new RuntimeException("Unknown infra config location: " . $location);
+    }
 
     public function loadFile(string $filename): void
     {

@@ -21,6 +21,10 @@ abstract class AbstractCommand extends Command
     {
         parent::__construct();
         $this->infra = new Infra();
-        $this->infra->loadFile(__DIR__ . '/../../example/infra.yaml');
+        $infraConfig = getenv('INFRA_CONFIG');
+        if (!$infraConfig) {
+            throw new RuntimeException("INFRA_CONFIG environment variable is undefined");
+        }
+        $this->infra->load($infraConfig);
     }
 }

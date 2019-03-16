@@ -34,10 +34,7 @@ class GetCommand extends AbstractCommand
     {
         $typeName = $input->getArgument('typeName');
         $resourceName = $input->getArgument('resourceName');
-
-        $infra = new Infra();
-        $infra->loadFile(__DIR__ . '/../../example/infra.yaml');
-
+        $infra = $this->infra;
         if (!$typeName) {
             foreach($infra->getTypeNames() as $typeName) {
                 $aliases = $infra->getTypeAliases($typeName);
