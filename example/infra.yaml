@@ -76,7 +76,28 @@ kind: User
 metadata:
   name: joe
 spec: ~
-
+---
+# kind: DnsAccount
+# metadata:
+#   name: transip1
+# spec: ~
+# ---
+kind: DnsDomain
+metadata:
+  name: example.com
+spec:
+  dnsAccount: transip1
+---
+kind: DnsRecord
+metadata:
+  name: test.example.com
+spec:
+  dnsDomain: example.com
+  ttl: 60
+  type: CNAME
+  name: test
+  value: other.example.org
+---
 
 
 
