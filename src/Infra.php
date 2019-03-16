@@ -173,8 +173,11 @@ class Infra
     /**
      * Returns array of hostnames matched by host name or host group name
      */
-    public function getHostsAuto(string $name): array
+    private function getHostsAuto(string $name): array
     {
+        if (!$name) {
+            return [];
+        }
         if ($this->hasResource('HostGroup', $name)) {
             $hostGroup = $this->getResource('HostGroup', $name);
             return $hostGroup->getHosts();
