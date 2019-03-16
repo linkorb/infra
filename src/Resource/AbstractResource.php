@@ -56,6 +56,7 @@ abstract class AbstractResource implements ResourceInterface
     }
 
     public function offsetGet($offset) {
+        $offset = $this->infra->inflector->camelize($offset);
         $method = 'get' . ucfirst($offset);
         return $this->{$method}();
     }
