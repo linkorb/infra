@@ -10,6 +10,7 @@ class HostGroupResource extends AbstractResource
     public function getHosts()
     {
         $hosts = $this->infra->getResourcesByType('Host');
+        $res = [];
         foreach ($hosts as $host) {
             if ($host->hasHostGroupName($this->getName())) {
                 $res[] = $host;
