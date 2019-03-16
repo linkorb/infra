@@ -44,6 +44,7 @@ $application->add(new \Infra\Command\FirewallInstallCommand());
 $application->add(new \Infra\Command\FirewallImportCommand());
 $application->add(new \Infra\Command\AnsibleImportInventoryCommand());
 $application->add(new \Infra\Command\AnsibleExportInventoryCommand());
+$application->add(new \Infra\Command\SensuImportChecksCommand());
 // $application->add(new \Infra\Command\DockerPsCommand());
 // $application->add(new \Infra\Command\DockerInspectCommand());
 // $application->add(new \Infra\Command\HostInstallSensuCommand());
