@@ -10,16 +10,16 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Infra\Firewall\IptablesFirewall;
 
-class GroupExecCommand extends AbstractCommand
+class HostExecCommand extends AbstractCommand
 {
     public function configure()
     {
-        $this->setName('group:exec')
-            ->setDescription('Execute a command on a group of hosts')
+        $this->setName('host:exec')
+            ->setDescription('Execute a command on a host or a group of hosts')
             ->addArgument(
-                'group',
+                'hosts',
                 InputArgument::REQUIRED,
-                'Name of the group'
+                'Name of the hosts'
             )
             ->addArgument(
                 'cmd',
@@ -31,23 +31,20 @@ class GroupExecCommand extends AbstractCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $groupName = $input->getArgument('group');
+        $hosts = $this->infra->getHosts($input->getArgument('hosts'));
         $command = $input->getArgument('cmd');
 
-        $loader = new AutoInfraLoader();
-        $infra = $loader->load();
-        $group = $infra->getHostGroups()->get($groupName);
-        foreach ($group->getHosts() as $host) {
+        foreach ($hosts as $host) {
+
             $output->writeLn("<info>" . $host->getName() . "</info>");
             // Create ssh and scp clients
-            $sshBuilder = $infra->getSshBuilder($host->getName());
+            $sshBuilder = $this->infra->getSshBuilder($host);
             $ssh = $sshBuilder->buildClient();
             $ssh->exec([$command]);
             echo $ssh->getOutput();
             if ($ssh->getExitCode()!=0) {
                 throw new RuntimeException($ssh->getErrorOutput());
             }
-
         }
     }
 }
