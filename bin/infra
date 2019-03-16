@@ -35,7 +35,7 @@ if (file_exists($filename)) {
 
 
 $application = new Application('Infra', '1.0.0');
-$application->setCatchExceptions(false);
+$application->setCatchExceptions(true);
 $application->add(new \Infra\Command\GetCommand());
 $application->add(new \Infra\Command\QueryCommand());
 $application->add(new \Infra\Command\HostExecCommand());
