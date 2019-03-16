@@ -67,9 +67,7 @@ abstract class AbstractResource implements ResourceInterface
             'metadata' => [
                 'name' => $this->getName()
             ],
-            'spec' => [
-                $this->spec
-            ]
+            'spec' => $this->spec
         ];
         return $data;
     }
