@@ -165,7 +165,9 @@ class Infra
             // print_r($filenames); exit();
             // return $this->loadFile($location);/
             foreach ($filenames as $filename) {
-                $this->loadFile($filename);
+                if (basename($filename)[0]!='_') { // allow to quickly disable a configuration by prefixing it with an underscore
+                    $this->loadFile($filename);
+                }
             }
         }
         return true;
