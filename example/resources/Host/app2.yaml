@@ -1,0 +1,11 @@
+---
+kind: Host
+metadata:
+  name: app2
+  description: Second cool application server
+spec:
+  os: Ubuntu 16.04
+  publicIp: 192.168.1.2
+  privateIp: 10.0.1.2
+  hostGroups: prod-west, app
+  

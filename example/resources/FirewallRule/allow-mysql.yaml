@@ -6,4 +6,4 @@ metadata:
 spec:
   hosts: db
   remoteHosts: app
-  template: "-A INPUT -d { host.publicIp } -s { remoteHost.publicIp } -p tcp --dport 3306 -j ACCEPT"
+  template: "-A INPUT -d { host.privateIp } -s { remoteHost.privateIp } -p tcp --dport 3306 -j ACCEPT"

@@ -3,6 +3,7 @@ query {
     host(name: "app0") {
         name
         fqdn
+        privateIp
         publicIp
         description
         localHostGroups {
@@ -19,14 +20,17 @@ query {
             }
         }
     }
-    firewallRule(name: "myFirewallRule") {
+    firewallRule(name: "allow-mysql") {
         name
         template
-        remote
-
         hosts {
             name
         }
+        remoteHosts {
+            name
+        }
+
+        
     }
     user(name: "torvalds") {
         name
@@ -35,7 +39,7 @@ query {
             publicIp
         }
     }
-    allHost {
+    allHosts {
         name
     }
 }
