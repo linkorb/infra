@@ -1,5 +1,4 @@
-Infra: Infrastructure as a GraphQL service
----
+<img src="https://upr.io/pRyK8d.png" style="width: 100%" />
 
 ## Introduction
 
