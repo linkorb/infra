@@ -183,12 +183,16 @@ Examples are included in the `example/scripts` directory. (examples in more lang
 * [ ] Feature: Allow variable expansion in resource configuration (i.e. to access parent container variables)
 * [ ] Feature: Set resource index value (incremental, from 1) and output in resource listings. Allow to fetch resource by index. This should simplify exploring using the `get` command.
 * [ ] Feature: Create minimal PHP SDK for scripts to simplify querying
+* [ ] Feature: script discovery
+* [ ] Feature: infra manifest file (for base variables, directory references, bulk script commands, etc)
 * [ ] Refactor: extract ansible and sensu commands into scripts
 * [ ] Refactor: Loader in externall class
 * [ ] Refactor: SSH or other infra-specific methods in external services (so Infra becomes general resource container)
 * [ ] Script: Add script to generate HTML documentation from infra
 * [ ] Script: Add script to fetch host facts
 * [ ] Script: Add grafana dashboard generator 
+* [ ] Script: Add DNS zone publisher
+* [ ] Script: Add Rundeck inventory generator
 * [ ] Feature: Add option to augment loaded resources (i.e. for host facts)
 * [ ] Resource: BackupRule + script for BackupPC, rsync, or similar
 * [ ] Resource: CronJob + conf.d/infra file generator
