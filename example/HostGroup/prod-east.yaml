@@ -1,0 +1,7 @@
+---
+kind: HostGroup
+metadata:
+  name: prod-east
+  description: Production hosts in the EAST
+spec:
+  parentHostGroup: prod

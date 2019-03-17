@@ -1,0 +1,8 @@
+---
+kind: HostGroup
+metadata:
+  name: prod
+  description: All hosts in the production environment
+  labels:
+    color: green
+spec: ~

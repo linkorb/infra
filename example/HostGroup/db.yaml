@@ -1,0 +1,6 @@
+---
+kind: HostGroup
+metadata:
+  name: db
+  description: Database servers
+spec: ~

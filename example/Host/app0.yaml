@@ -1,0 +1,11 @@
+---
+kind: Host
+metadata:
+  name: app0
+  description: Some cool app0 server
+spec:
+  os: Ubuntu 16.04
+  publicIp: 192.168.1.1
+  privateIp: 10.0.1.1
+  hostGroups: prod-west, app
+  

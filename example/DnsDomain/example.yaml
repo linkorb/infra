@@ -1,0 +1,6 @@
+---
+kind: DnsDomain
+metadata:
+  name: example.com
+spec:
+  dnsAccount: transip1

@@ -1,0 +1,6 @@
+---
+kind: HostGroup
+metadata:
+  name: app
+  description: Application servers
+spec: ~

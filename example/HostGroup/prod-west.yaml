@@ -1,0 +1,7 @@
+---
+kind: HostGroup
+metadata:
+  name: prod-west
+  description: Production hosts in the WEST
+spec:
+  parentHostGroup: prod

@@ -1,0 +1,10 @@
+---
+kind: DnsRecord
+metadata:
+  name: test.example.com
+spec:
+  dnsDomain: example.com
+  ttl: 60
+  type: CNAME
+  name: test
+  value: other.example.org

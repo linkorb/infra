@@ -1,0 +1,9 @@
+---
+kind: FirewallRule
+metadata:
+  name: allow-mysql
+  description: Allow mysql traffic on database servers from app servers
+spec:
+  hosts: db
+  remoteHosts: app
+  template: "-A INPUT -d { host.publicIp } -s { remoteHost.publicIp } -p tcp --dport 3306 -j ACCEPT"
