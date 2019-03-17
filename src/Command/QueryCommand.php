@@ -22,14 +22,11 @@ class QueryCommand extends AbstractCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $infra = new Infra();
-        $infra->loadFile(__DIR__ . '/../../example/infra.yaml');
-
         $query = file_get_contents("php://stdin");
 
         $rootValue = [];
         $variableValues = [];
-        $result = GraphQL::executeQuery($infra->getSchema(), $query, $rootValue, null, $variableValues);
+        $result = GraphQL::executeQuery($this->infra->getSchema(), $query, $rootValue, null, $variableValues);
         $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
         $output = $result->toArray($debug);
 
