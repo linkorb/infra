@@ -25,9 +25,6 @@ class UserResource extends AbstractResource
                     'hosts' => [
                         'type' => Type::listOf($infra->getType('Host')),
                         'description' => 'Returns all hosts where this user has an account',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getHosts();
-                        },
                     ],
                     
                 ];

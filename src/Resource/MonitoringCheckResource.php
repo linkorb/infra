@@ -62,9 +62,6 @@ class MonitoringCheckResource extends AbstractResource
                 'description' => [
                     'type' => Type::string(),
                     'description' => 'Description',
-                    'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                        return $resource->getTemplate();
-                    }
                 ],
                 'command' => [
                     'type' => Type::string(),
@@ -77,9 +74,6 @@ class MonitoringCheckResource extends AbstractResource
                 'hosts' => [
                     'type' => Type::listOf($infra->getType('Host')),
                     'description' => 'Returns all hosts that should subscribe to this rule',
-                    'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                        return $resource->getHosts();
-                    },
                 ],
             ],
         ];

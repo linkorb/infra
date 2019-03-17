@@ -43,9 +43,6 @@ class DnsDomainResource extends AbstractResource
                     'dnsRecords' => [
                         'type' => Type::listOf($infra->getType('DnsRecord')),
                         'description' => 'Returns all dns records for this domain',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getDnsRecords();
-                        },
                     ],
                 ];
             }

@@ -75,16 +75,10 @@ class HostGroupResource extends AbstractResource
                     'parentHostGroup' => [
                         'type' => $infra->getType('HostGroup'),
                         'description' => 'Parent host group',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getParentHostGroup();
-                        },
                     ],
                     'hosts' => [
                         'type' => Type::listOf($infra->getType('Host')),
                         'description' => 'Returns all hosts in this group',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getHosts();
-                        },
                     ],
                 ];
             }

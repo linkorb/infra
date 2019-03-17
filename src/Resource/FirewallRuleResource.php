@@ -50,31 +50,18 @@ class FirewallRuleResource extends AbstractResource
                 'description' => [
                     'type' => Type::string(),
                     'description' => 'Description',
-                    'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                        return $resource->getTemplate();
-                    }
-                ],
-                'remoteHosts' => [
-                    'type' => Type::string(),
-                    'description' => 'Remote hosts',
                 ],
                 'template' => [
                     'type' => Type::string(),
                     'description' => 'iptables template',
                 ],
-                'fqdn' => [
-                    'type' => Type::string(),
-                    'description' => 'Description',
-                    'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                        return $resource['name'] . '.host.linkorb.cloud';
-                    }
-                ],
                 'hosts' => [
                     'type' => Type::listOf($infra->getType('Host')),
                     'description' => 'Returns all hosts where this firewall rule is active',
-                    'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                        return $resource->getHosts();
-                    },
+                ],
+                'remoteHosts' => [
+                    'type' => Type::listOf($infra->getType('Host')),
+                    'description' => 'Returns all remote hosts that this firewall rule refers to',
                 ],
             ],
         ];

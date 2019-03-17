@@ -15,6 +15,11 @@ class HostResource extends AbstractResource
         return $this->spec['publicIp'] ?? null;
     }
 
+    public function getFqdn()
+    {
+        return $this->getName() . '.example.com';
+    }
+
     public function getPrivateIp()
     {
         return $this->spec['privateIp'] ?? null;
@@ -113,7 +118,11 @@ class HostResource extends AbstractResource
                     'name' => Type::id(),
                     'publicIp' => [
                         'type' => Type::string(),
-                        'description' => 'Unique code',
+                        'description' => 'Public IPv4 address',
+                    ],
+                    'privateIp' => [
+                        'type' => Type::string(),
+                        'description' => 'Private IPv4 address',
                     ],
                     'description' => [
                         'type' => Type::string(),
@@ -121,24 +130,15 @@ class HostResource extends AbstractResource
                     ],
                     'fqdn' => [
                         'type' => Type::string(),
-                        'description' => 'Description',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource['name'] . '.host.linkorb.cloud';
-                        }
+                        'description' => 'Fully Qualified Domain Name',
                     ],
                     'hostGroups' => [
                         'type' => Type::listOf($infra->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (recursively)',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getHostGroups();
-                        },
                     ],
                     'localHostGroups' => [
                         'type' => Type::listOf($infra->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (local only)',
-                        'resolve' => function ($resource, $args, $context, $info) use ($infra) {
-                            return $resource->getLocalHostGroups();
-                        },
                     ],
                 ];
             }
