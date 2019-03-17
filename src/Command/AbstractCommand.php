@@ -23,7 +23,7 @@ abstract class AbstractCommand extends Command
         $this->infra = new Infra();
         $infraConfig = getenv('INFRA_CONFIG');
         if (!$infraConfig) {
-            throw new RuntimeException("INFRA_CONFIG environment variable is undefined");
+            $infraConfig = __DIR__ . '/../../example';
         }
         $this->infra->load($infraConfig);
         $this->infra->validate();
