@@ -167,7 +167,7 @@ class Infra
             return true;
         }
         if (is_dir($location)) {
-            $filenames = $this->rglob($location . '/*.yaml');
+            $filenames = $this->rglob($location . '/resources/*.yaml');
             // print_r($filenames); exit();
             // return $this->loadFile($location);/
             foreach ($filenames as $filename) {
