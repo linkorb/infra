@@ -49,9 +49,9 @@ class QueryResource
                     return $resource;
                 },
             ];
-            $fieldConfig['all' . ucfirst($typeName)] = [
+            $fieldConfig['all' . $infra->getInflector()->pluralize($typeName)] = [
                 'type' => Type::listOf($infra->getType($typeName)),
-                'description' => 'Returns all ' . $typeName,
+                'description' => 'Returns all ' . $infra->getInflector()->pluralize($typeName),
                 'resolve' => function ($root, $args) use ($infra, $typeName) {
                     $resources = $infra->getResourcesByType($typeName);
                     return $resources;
