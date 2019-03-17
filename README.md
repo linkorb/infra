@@ -48,7 +48,7 @@ You can define your resources in standalone YAML files, or (as in this example) 
 
 If you're familiar with Kubernetes, you'll feel right at home.
 
-Each resource specifies it's type using the `Kind` key. A list of available resource types is provided below.
+Each resource specifies it's type using the `kind` key. A list of available resource types is provided below.
 
 Resources contain a `metadata` key that allows you to specify the resource name, description, a set of labels and annotations (more on metadata below).
 
@@ -61,7 +61,7 @@ The `spec` key configures the resource, and it's available keys depend on the `k
     cd infra
     composer install # See https://getcomposer.org/download/ if you don't have composer installed yet
 
-It is strongly recommended to add `bin/` to your environment's `PATH` variable, so you can easily invoke the `infra` command-line tool from anywhere on your system.
+**NOTE:** It is **strongly** recommended to add `bin/` to your environment's `PATH` variable, so you can easily invoke the `infra` command-line tool from anywhere on your system.
 
 If you're using Bash, you can do this by adding the following line to your `~/.bashrc` file:
 
@@ -75,11 +75,11 @@ Infra decides where to load it's infrastructure data based on the `INFRA_CONFIG`
 
 You can define the variable wherever you like. For example in your `~/.bashrc`, or a `.env` file in the root of the infra directory (i.e. `/opt/infra/.env`). A `.env.dist` file is provided.
 
-If INFRA_CONFIG is undefined, it will point to the `example/` directory as a default.
+If `INFRA_CONFIG` is undefined, it will point to the `example/` directory as a default.
 
 ## Example project
 
-The `example/` directory contains an example infrastructure configuration. To load it, make sure your `INFRA_CONFIG` variable points to the `example/` directory (absolute path required), or simply leave `INFRA_CONFIG` undefined (the example project is loaded by default).
+The `example/` directory contains an example infrastructure configuration (You can view `example/README.md` for it's details). To load it, make sure your `INFRA_CONFIG` variable points to the `example/` directory (absolute path required), or simply leave `INFRA_CONFIG` undefined: the example project is loaded by default.
 
 It is recommended to explore the example project first, before using infra to configure your own infrastructure. The example configuration will contain examples for all relevant resource types, configured in a sensible way to show you all available functionality.
 
@@ -94,23 +94,23 @@ You can get a list of available commands by simply typing `infra list` or just `
 The `infra get` command lets you explore your infrastructure configuration. Type `infra get --help` for it's options. All arguments are optional, and the more you specify, the more specific your response will be. Some examples:
 
 * `infra get`: returns a list of available resource types (and their aliases)
-* `infra get Host`: returns all defined objects of that resource type. 
-* `infra get h`: you can use any of the available resource type aliases as shortcuts
+* `infra get hosts`: returns all defined objects of that resource type. 
+* `infra get hg`: you can use any of the available resource type aliases as shortcuts: hg, hostGroup, HostGroup, hostGroups, HostGroups are all equivalent here.
 * `infra get Host app0`: returns a resource definition by type and name.
 * `infra get HostGroup db hosts`: returns a calculated property from a resource by type, name and propertyname.
  
-### Running graphql queries
+### Running GraphQL queries
 
 The `infra query` command let's you perform a GraphQL query against your infrastructure configuration.
 It reads the query from `stdin` and outputs the response (as json) to `stdout`.
 
 For example:
 
-    infra query < /opt/infra/example/example.graphql
+    infra query < /opt/infra/example/graphql/example.graphql
 
 Introspection is also enabled, so you can execute the following command to get a full export of all supported types with detailed information about available fields:
 
-    infra query < /opt/infra/example/introspection.graphql
+    infra query < /opt/infra/example/graphql/introspection.graphql
 
 ## Listing hosts (host expansion algorithm)
 
@@ -139,7 +139,7 @@ Infra can generate complex firewall configurations based on very simple rule def
 
 Run `infra firewall:show <hosts>` (or short-hand notation `infra f:s <hosts>`) to let infra generate firewall rules for the specified host.
 
-Running `infra f:s db0m` will output the rules to the console like this:
+Running `infra f:s db0m` will output the generated iptables rules to the console like this:
 
 ```
 #### iptables boilerplate removed for brevity ####
@@ -162,13 +162,13 @@ Additionally, you'll notice that the db0m server has 2 rules generated for the 2
 
 ## Installing firewall rules
 
-Run `infra firewall:install <hosts>` to install the firewall. Infra will ssh into the server and:
+Run `infra firewall:install <hosts>` to install the firewall. Infra will ssh into the host(s) and:
 
 1. backup the current iptable rules using `iptables-save`. The backup is created in /tmp, and the exact filename will be displayed on the console.
 2. Copy the firewall rules to the server
 3. Run `iptables-restore` on the rules file and output the results.
 
-## Scripts
+## Scripts (in your language of choice)
 
 If you'd like to build tools that leverage your infrastructure graph in your language of choice (php, node, python, ruby, bash, etc), scripts are your solution.
 
