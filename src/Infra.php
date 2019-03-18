@@ -240,6 +240,9 @@ class Infra
         if (is_null($names)) {
             return [];
         }
+        if ($names == '*') {
+            return $this->getResourcesByType('Host');
+        }
         if (is_string($names)) {
             $names = explode(',', $names); // turn into array
             foreach ($names as $i=>$name) {
