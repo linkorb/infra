@@ -58,7 +58,7 @@ class FirewallInstallCommand extends AbstractCommand
 
             // upload
             $remoteRulesFilename = '/tmp/rules.v4.' . rand(0, 9999999);
-            $output->writeLn("<info>Uploading new rules to {$host->getConnectionAddress()}:{$remoteRulesFilename}</info>");
+            $output->writeLn("<info>Uploading new rules to {$host->getSshAddress()}:{$remoteRulesFilename}</info>");
             $res = $scp->copy(
                 $tmpFilename,
                 $scp->getRemotePath($remoteRulesFilename)
