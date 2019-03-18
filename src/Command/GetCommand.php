@@ -59,14 +59,14 @@ class GetCommand extends AbstractCommand
 
         if (!$resourceName) {
             foreach ($resources as $resource) {
-                $output->writeLn(" * " . $resource->getName());
+                $output->writeLn(" * <info>" . $resource->getName() . '</info>');
             }
             return;
         }
         $resource = $infra->getResource($typeName, $resourceName);
         if (!$propertyName) {
             $yaml = Yaml::dump($resource->serialize(), 10, 2);
-            $output->write($yaml);
+            $this->writeYaml($output, $yaml);
             return;
         }
 
