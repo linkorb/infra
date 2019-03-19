@@ -72,7 +72,7 @@ $infra->validate();
 
 
 $application = new Application('Infra', '1.0.0');
-$application->setCatchExceptions(false);
+$application->setCatchExceptions(true);
 $application->add(new \Infra\Command\GetCommand($infra, $highlighter));
 $application->add(new \Infra\Command\QueryCommand($infra));
 $application->add(new \Infra\Command\ScriptCommand($infra));
