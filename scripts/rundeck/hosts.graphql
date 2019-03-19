@@ -1,0 +1,11 @@
+query {
+    allHosts {
+        name
+        description
+        publicIp
+        privateIp
+        hostGroups {
+            name
+        }
+    }
+}
