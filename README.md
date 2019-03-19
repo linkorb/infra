@@ -208,15 +208,16 @@ A set of "core" scripts are included in the `scripts/` directory of this reposit
 * [+] Feature: Create minimal PHP SDK for scripts to simplify querying
 * [+] Feature: script discovery
 * [ ] Feature: infra manifest file (for base variables, directory references, bulk script commands, etc)
+* [ ] Feature: support wildcards in host expansion algorithm (i.e. by using fnmatch)
 * [ ] Refactor: extract ansible and sensu commands into scripts
-* [ ] Refactor: Loader in externall class
+* [ ] Refactor: Loader in external class
 * [ ] Refactor: SSH or other infra-specific methods in external services (so Infra becomes general resource container)
 * [ ] Script: Add script to generate HTML documentation from infra
 * [ ] Script: Add script to fetch host facts
 * [ ] Script: Add grafana dashboard generator 
 * [ ] Script: Add DNS zone publisher
 * [ ] Script: Add Rundeck inventory generator
-* [ ] Feature: Add option to augment loaded resources (i.e. for host facts)
+* [ ] Feature: Add option to augment loaded resources with labels (i.e. for host facts)
 * [ ] Resource: BackupRule + script for BackupPC, rsync, or similar
 * [ ] Resource: CronJob + conf.d/infra file generator
 * [ ] Resource: DockerEngine, DockerApp. With docker-compose YAML as inline spec
