@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Infra\Sdk\Utils;
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+
+// Create the GraphQL query
+$query = <<<GRAPHQL
+query {
+    allMonitoringChecks {
+        name
+        command
+        interval
+        occurrences
+        subscribers
+        handlers
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+$res = ['checks' => []];
+foreach ($data['data']['allMonitoringChecks']  as $check) {
+    $res['checks'][$check['name']] = [
+        'command' => $check['command'],
+        'interval' => $check['interval'],
+        'occurrences' => $check['occurrences'],
+        'subscribers' => $check['subscribers'],
+        'handlers' => $check['handlers'],
+    ];
+}
+echo json_encode($res, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . PHP_EOL;

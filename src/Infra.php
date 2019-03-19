@@ -13,13 +13,16 @@ use Doctrine\Common\Inflector\Inflector;
 use SSHClient\ClientConfiguration\ClientConfiguration;
 use SSHClient\ClientBuilder\ClientBuilder;
 use RuntimeException;
+use Infra\Script;
 
 class Infra
 {
     protected $types = [];
     protected $typeClassMap = [];
     protected $resources = [];
+    protected $scripts = [];
     protected $schema;
+    protected $scriptPaths = [];
 
     public function __construct()
     {
@@ -162,22 +165,28 @@ class Infra
 
     public function load(string $location)
     {
-        if (is_file($location)) {
-            $this->loadFile($location);
-            return true;
+        if (!is_dir($location)) {
+            throw new RuntimeException("Location is not a directory: " . $location);
         }
-        if (is_dir($location)) {
-            $filenames = $this->rglob($location . '/resources/*.yaml');
-            // print_r($filenames); exit();
-            // return $this->loadFile($location);/
-            foreach ($filenames as $filename) {
-                if (basename($filename)[0]!='_') { // allow to quickly disable a configuration by prefixing it with an underscore
-                    $this->loadFile($filename);
-                }
+        // === Load resources ===
+        $filenames = $this->rglob($location . '/resources/*.yaml');
+        foreach ($filenames as $filename) {
+            if (basename($filename)[0]!='_') { // allow to quickly disable a configuration by prefixing it with an underscore
+                $this->loadResourceFile($filename);
             }
         }
+
+        // === Load scripts ===
+
+        $this->scriptPaths = [
+            __DIR__ . '/../scripts',
+            $location . '/scripts',
+        ];
+
+        $this->scanScripts();
+
         return true;
-        throw new RuntimeException("Unknown infra config location: " . $location);
+       
     }
 
     public function validate()
@@ -189,7 +198,7 @@ class Infra
         }
     }
 
-    public function loadFile(string $filename): void
+    public function loadResourceFile(string $filename): void
     {
         if (!file_exists($filename)) {
             throw new Exception\FileNotFoundException($filename);
@@ -293,5 +302,38 @@ class Infra
             throw new RuntimeException($scp->getErrorOutput());
         }
         unlink($tmpfile);
+    }
+
+    public function getScripts()
+    {
+        return $this->scripts;
+    }
+
+    public function scanScripts()
+    {
+        foreach ($this->scriptPaths as $path) {
+            $filenames = glob($path . '/{**/*,*}', GLOB_BRACE);
+            foreach ($filenames as $filename) {
+                $filename = realpath($filename);
+                if (is_executable($filename)) {
+                    $info = pathinfo($filename);
+                    
+                    $name =  $info['filename'];
+                    $prefix = basename($info['dirname']);;
+                    if ($prefix != 'scripts') {
+                        $name = $prefix . ':' . $name;
+                    }
+
+                    $doc = null;
+                    if (file_exists($filename . '.md')) {
+                        $doc = file_get_contents($filename . '.md');
+                    }
+
+                    $script = new Script($name, $filename, $doc);
+                    $this->scripts[$script->getName()] = $script;
+                }
+                // echo $filename . PHP_EOL;
+            }
+        }
     }
 }

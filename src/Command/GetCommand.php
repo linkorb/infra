@@ -14,6 +14,14 @@ use Infra\Infra;
 
 class GetCommand extends AbstractCommand
 {
+    protected $highlighter;
+
+    public function __construct(Infra $infra, $highlighter)
+    {
+        parent::__construct($infra);
+        $this->highlighter = $highlighter;
+    }
+    
     public function configure()
     {
         $this->setName('get')

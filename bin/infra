@@ -3,6 +3,8 @@
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
+use CliHighlighter\Service\Highlighter;
+use Infra\Infra;
 
 $loader = __DIR__ . '/../vendor/autoload.php';
 
@@ -34,21 +36,59 @@ if (file_exists($filename)) {
 }
 
 
+$options = [
+    'json' => [
+        'keys'   => 'magenta',
+        'values' => 'green',
+        'braces' => 'light_white',
+    ],
+
+    'xml' => [
+        'elements'   => 'yellow',
+        'attributes' => 'green',
+        'values'     => 'green',
+        'innerText'  => 'light_white',
+        'comments'   => 'gray',
+        'meta'       => 'yellow',
+    ],
+
+    'yaml' => [
+        'separators' => 'blue',
+        'keys'       => 'green',
+        'values'     => 'light_white',
+        'comments'   => 'red',
+    ],
+];        
+$highlighter = new Highlighter($options);
+
+$infra = new Infra();
+$infraConfig = getenv('INFRA_CONFIG');
+if (!$infraConfig) {
+    $infraConfig = __DIR__ . '/../example';
+}
+$infra->load($infraConfig);
+$infra->validate();
+
+
+
 $application = new Application('Infra', '1.0.0');
-$application->setCatchExceptions(true);
-$application->add(new \Infra\Command\GetCommand());
-$application->add(new \Infra\Command\QueryCommand());
-$application->add(new \Infra\Command\HostListCommand());
-$application->add(new \Infra\Command\HostExecCommand());
-$application->add(new \Infra\Command\FirewallShowCommand());
-$application->add(new \Infra\Command\FirewallInstallCommand());
-$application->add(new \Infra\Command\FirewallImportCommand());
-$application->add(new \Infra\Command\AnsibleImportInventoryCommand());
-$application->add(new \Infra\Command\AnsibleExportInventoryCommand());
-$application->add(new \Infra\Command\SensuImportChecksCommand());
-$application->add(new \Infra\Command\SensuExportChecksCommand());
-// $application->add(new \Infra\Command\DockerPsCommand());
-// $application->add(new \Infra\Command\DockerInspectCommand());
-// $application->add(new \Infra\Command\HostInstallSensuCommand());
-// $application->add(new \Infra\Command\HostUpdateUsersCommand());
+$application->setCatchExceptions(false);
+$application->add(new \Infra\Command\GetCommand($infra, $highlighter));
+$application->add(new \Infra\Command\QueryCommand($infra));
+$application->add(new \Infra\Command\ScriptCommand($infra));
+$application->add(new \Infra\Command\HostListCommand($infra));
+$application->add(new \Infra\Command\HostExecCommand($infra));
+$application->add(new \Infra\Command\FirewallShowCommand($infra));
+$application->add(new \Infra\Command\FirewallInstallCommand($infra));
+$application->add(new \Infra\Command\FirewallImportCommand($infra));
+$application->add(new \Infra\Command\AnsibleImportInventoryCommand($infra));
+$application->add(new \Infra\Command\AnsibleExportInventoryCommand($infra));
+$application->add(new \Infra\Command\SensuImportChecksCommand($infra));
+
+foreach ($infra->getScripts() as $script) {
+    $command = \Infra\Command\CustomCommand::fromScript($infra, $script);
+    $application->add($command);
+}
+
 $application->run();
+

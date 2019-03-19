@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use Infra\Sdk\Utils;
+
+// Create the GraphQL query
+$query = <<<GRAPHQL
+query {
+    hosts: allHosts {
+        name
+        fqdn
+        publicIp
+        privateIp
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+// print_r($data);
+// access $data as an array here, do whatever you like with it
+
+foreach ($data['data']['hosts'] ?? [] as $host) {
+    echo "* " . $host['name'] . ' (' . $host['publicIp'] . ')' . PHP_EOL;
+}

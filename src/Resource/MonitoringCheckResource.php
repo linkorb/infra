@@ -71,6 +71,18 @@ class MonitoringCheckResource extends AbstractResource
                     'type' => Type::string(),
                     'description' => 'interval',
                 ],
+                'occurrences' => [
+                    'type' => Type::string(),
+                    'description' => 'occurrences',
+                ],
+                'subscribers' => [
+                    'type' => Type::listOf(Type::string()),
+                    'description' => 'subscribers',
+                ],
+                'handlers' => [
+                    'type' => Type::listOf(Type::string()),
+                    'description' => 'handlers',
+                ],
                 'hosts' => [
                     'type' => Type::listOf($infra->getType('Host')),
                     'description' => 'Returns all hosts that should subscribe to this rule',

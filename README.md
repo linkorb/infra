@@ -171,19 +171,42 @@ Run `infra firewall:install <hosts>` to install the firewall. Infra will ssh int
 
 If you'd like to build tools that leverage your infrastructure graph in your language of choice (php, node, python, ruby, bash, etc), scripts are your solution.
 
-Simply add an executable script in the `scripts/` directory of your infrastructure configuration repository, and let them execute GraphQL queries using the `infra query` command (pass in the query over stdin, getting the response json from stdout) and apply any logic you see fit.
+### Creating your own script
+
+To create your own custom script:
+
+1. Add an executable script in the `scripts/` directory of your infrastructure configuration repository
+2. Make sure to `chmod 755` the file, as only executable files are detected by infra
+3. Let your script execute GraphQL queries using the `infra query` command (pass in the query over stdin, getting the response json from stdout)
+4. Use the returned data to apply any logic you see fit: export to common config formats, call a set of APIs, generate documentation, etc.
+
+### SDKs
+
+An SDK is not required, but may make your life as an infra script developer more convenient. Currently available SDKs:
+
+* https://github.com/linkorb/infra-sdk-php
+
+Let us know if you've created an SDKs for other languages, we'll be glad to link to it from this section.
+
+### Example scripts
 
 Examples are included in the `example/scripts` directory. (examples in more languages welcomed as PRs!)
 
+### Core scripts
+
+A set of "core" scripts are included in the `scripts/` directory of this repository. The core scripts are for commonly used applications that will be of use to many infra users. If you've created a reusable script that you'd like to be included in the core scripts, be sure to send a PR!
+
+
+
 ## Todo
 
-* [ ] Command: Add `infra script` command for listing and executing discovered scripts
+* [+] Command: Add `infra script` command for listing and executing discovered scripts
 * [ ] Command: Add `infra serve` command that spins up a GraphQL server
 * [ ] Feature: Allow in-line resources in order to define resources as part of their container (i.e. DnsRecord as part of Deployment etc)
 * [ ] Feature: Allow variable expansion in resource configuration (i.e. to access parent container variables)
 * [ ] Feature: Set resource index value (incremental, from 1) and output in resource listings. Allow to fetch resource by index. This should simplify exploring using the `get` command.
-* [ ] Feature: Create minimal PHP SDK for scripts to simplify querying
-* [ ] Feature: script discovery
+* [+] Feature: Create minimal PHP SDK for scripts to simplify querying
+* [+] Feature: script discovery
 * [ ] Feature: infra manifest file (for base variables, directory references, bulk script commands, etc)
 * [ ] Refactor: extract ansible and sensu commands into scripts
 * [ ] Refactor: Loader in externall class

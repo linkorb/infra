@@ -1,0 +1,12 @@
+---
+kind: MonitoringCheck
+metadata:
+  name: cron
+spec:
+  command: 'check-process.rb -p cron'
+  hosts: all
+  interval: 60
+  occurrences: 0
+  handlers:
+    - default
+    - debug

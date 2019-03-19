@@ -1,0 +1,8 @@
+query {
+    hosts: allHosts {
+        name
+        fqdn
+        publicIp
+        privateIp
+    }
+}
