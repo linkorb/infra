@@ -1,0 +1,72 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use DnsX\Adapter\TransIPAdapter;
+use DnsX\Model\DnsRecord;
+use Infra\Sdk\Utils;
+use Symfony\Component\Dotenv\Dotenv;
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+getEnvironment();
+
+$inventoryDomain = getenv('TRANSIP_INVENTORY_DOMAIN');
+if (false === $inventoryDomain) {
+    throw new \RuntimeException("No 'TRANSIP_INVENTORY_DOMAIN' environment variable provided. Please check Config.");
+}
+
+$adapter = getTransIPAdapter();
+
+// Create the GraphQL query
+$query = <<<GRAPHQL
+query {
+    allHosts {
+        name
+        publicIp
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+$records = [];
+
+foreach ($data['data']['allHosts'] as $host) {
+    $fullName = $host['name'] . '.host';
+    $record = new DnsRecord();
+    $record->setName($fullName);
+    $record->setType('A');
+    $record->setTtl(60);
+    $record->setValue($host['publicIp']);
+    $records[] = $record;
+}
+
+try {
+    $adapter->setDnsRecords($inventoryDomain, $records);
+} catch (\Exception $e) {
+    echo $e->getMessage() . PHP_EOL;
+    exit(-1);
+}
+
+function getTransIPAdapter()
+{
+    $username = getenv('TRANSIP_USERNAME');
+    if (false === $username) {
+        throw new \RuntimeException("No 'TRANSIP_USERNAME' environment variable provided. Please check Config.");
+    }
+
+    $key = getenv('TRANSIP_KEY');
+    if (false === $key) {
+        throw new \RuntimeException("No 'TRANSIP_KEY' environment variable provided. Please check Config.");
+    }
+
+    return new TransIPAdapter($username, $key);
+}
+
+function getEnvironment()
+{
+    $dotenv = new Dotenv();
+    $dotenv->load(__DIR__ . '/../../.env');
+}
