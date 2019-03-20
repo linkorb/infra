@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Infra\Sdk\Utils;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+// Create the GraphQL query
+$query = <<<GRAPHQL
+query {
+    allHosts {
+        name
+        description
+        publicIp
+        privateIp
+        sshUsername
+        hostGroups {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+$nodes = [];
+
+foreach ($data['data']['allHosts'] as $host) {
+    $nodeData = [];
+    foreach ($host as $key => $value) {
+        if ('hostGroups' === $key && is_array($value) && !empty($value)) {
+            $tags = [];
+            array_map(function ($a) use (&$tags) {
+                $tags[] = $a['name'];
+            }, $value);
+
+            $nodeData['@tags'] = implode(', ', $tags);
+            continue;
+        }
+
+        if (!array_key_exists($key, getRundeckNodeAttributes())) {
+            continue;
+        }
+
+        $nodeData['@' . getRundeckNodeAttributes()[$key]] = $value;
+    }
+
+    $nodes['node'][] = $nodeData;
+}
+
+$result = (new XmlEncoder())->encode($nodes, XmlEncoder::FORMAT, [
+    XmlEncoder::ROOT_NODE_NAME => 'project',
+    XmlEncoder::STANDALONE     => false,
+    XmlEncoder::FORMAT_OUTPUT  => true,
+]);
+
+$result = preg_replace("/^<\?.*\n/", '', $result);
+
+echo $result;
+
+function getRundeckNodeAttributes()
+{
+    return [
+        // Default Rundeck Attributes
+        'name'        => 'name',
+        'description' => 'description',
+        'hostname'    => 'hostname',
+        'osArch'      => 'osArch',
+        'osFamily'    => 'osFamily',
+        'osName'      => 'osName',
+        'tags'        => 'tags',
+        'username'    => 'username',
+        'editUrl'     => 'editUrl',
+        'remoteUrl'   => 'remoteUrl',
+        'anything'    => 'anything',
+
+        // Mapped Attributes
+        'publicIp'    => 'hostname',
+        'sshUsername' => 'username',
+    ];
+}
