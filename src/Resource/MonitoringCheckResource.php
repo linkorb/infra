@@ -68,11 +68,11 @@ class MonitoringCheckResource extends AbstractResource
                     'description' => 'Command',
                 ],
                 'interval' => [
-                    'type' => Type::string(),
+                    'type' => Type::int(),
                     'description' => 'interval',
                 ],
                 'occurrences' => [
-                    'type' => Type::string(),
+                    'type' => Type::int(),
                     'description' => 'occurrences',
                 ],
                 'subscribers' => [
