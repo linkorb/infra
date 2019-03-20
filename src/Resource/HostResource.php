@@ -124,6 +124,14 @@ class HostResource extends AbstractResource
                         'type' => Type::string(),
                         'description' => 'Private IPv4 address',
                     ],
+                    'sshUsername' => [
+                        'type' => Type::string(),
+                        'description' => 'SSH username',
+                    ],
+                    'sshAddress' => [
+                        'type' => Type::string(),
+                        'description' => 'SSH address',
+                    ],
                     'description' => [
                         'type' => Type::string(),
                         'description' => 'Description',
