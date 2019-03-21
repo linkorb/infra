@@ -4,9 +4,6 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/record-generator.php';
 
-use Infra\Sdk\Utils;
-use Symfony\Component\Dotenv\Dotenv;
-
 $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
 getEnvironment();
@@ -21,10 +18,4 @@ $records = generateRecords();
 echo "Infra domain: $infraDomain" . PHP_EOL;
 foreach ($records as $record) {
     echo $record->getName() . ' ' . $record->getType() . ' ' . $record->getTtl() . ' ' . $record->getValue() . PHP_EOL;
-}
-
-function getEnvironment()
-{
-    $dotenv = new Dotenv();
-    $dotenv->load(__DIR__ . '/../../.env');
 }

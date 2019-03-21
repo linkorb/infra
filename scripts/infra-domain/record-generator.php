@@ -2,7 +2,11 @@
 
 use Infra\Sdk\Utils;
 use DnsX\Model\DnsRecord;
+use Symfony\Component\Dotenv\Dotenv;
 
+/**
+ * @return DnsRecord[]
+ */
 function generateRecords()
 {
     // Create the GraphQL query
@@ -29,9 +33,9 @@ GRAPHQL;
         $record->setValue($host['publicIp']);
         $records[] = $record;
     }
-    
+
     foreach ($data['data']['allHosts'] as $host) {
-        if ($host['privateIp']) {
+        if (!empty($host['privateIp'])) {
             $fullName = 'private-ip.' . $host['name'] . '.host';
             $record = new DnsRecord();
             $record->setName($fullName);
@@ -41,5 +45,12 @@ GRAPHQL;
             $records[] = $record;
         }
     }
+
     return $records;
+}
+
+function getEnvironment()
+{
+    $dotenv = new Dotenv();
+    $dotenv->load(__DIR__ . '/../../.env');
 }
