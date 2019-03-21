@@ -24,7 +24,8 @@
         "webonyx/graphql-php": "^0.13.1",
         "geekdevs/cli-highlighter": "^1.0.3",
         "linkorb/dnsx": "^1.0",
-        "symfony/serializer": "^4.2"
+        "symfony/serializer": "^4.2",
+        "badcow/dns": "^2.2"
     },
     "require-dev": {
         "linkorb/autotune": "~1.0"
