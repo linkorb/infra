@@ -1,0 +1,10 @@
+---
+kind: GitRepository
+metadata:
+    name: github.com__linkorb__infra
+    description: "INFRA: your infrastructure as a GraphQL service"
+    labels:
+        "infra.linkorb.com/code/license": "MIT"
+        "infra.linkorb.com/code/language": "php"
+spec:
+    url: "git@github.com:linkorb/infra.git"
