@@ -2,6 +2,7 @@
 <?php
 
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/record-generator.php';
 
 use DnsX\Adapter\TransIPAdapter;
 use DnsX\Model\DnsRecord;
@@ -19,29 +20,7 @@ if (false === $infraDomain) {
 
 $adapter = getTransIPAdapter();
 
-// Create the GraphQL query
-$query = <<<GRAPHQL
-query {
-    allHosts {
-        name
-        publicIp
-    }
-}
-GRAPHQL;
-
-$data = Utils::query($query);
-
-$records = [];
-
-foreach ($data['data']['allHosts'] as $host) {
-    $fullName = $host['name'] . '.host';
-    $record = new DnsRecord();
-    $record->setName($fullName);
-    $record->setType('A');
-    $record->setTtl(60);
-    $record->setValue($host['publicIp']);
-    $records[] = $record;
-}
+$records = generateRecords();
 
 try {
     echo "Setting DNS records on infra domain: $infraDomain\n";
