@@ -12,9 +12,9 @@ $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
 getEnvironment();
 
-$inventoryDomain = getenv('TRANSIP_INVENTORY_DOMAIN');
-if (false === $inventoryDomain) {
-    throw new \RuntimeException("No 'TRANSIP_INVENTORY_DOMAIN' environment variable provided. Please check Config.");
+$infraDomain = getenv('TRANSIP_INFRA_DOMAIN');
+if (false === $infraDomain) {
+    throw new \RuntimeException("No 'TRANSIP_INFRA_DOMAIN' environment variable provided. Please check Config.");
 }
 
 $adapter = getTransIPAdapter();
@@ -44,7 +44,8 @@ foreach ($data['data']['allHosts'] as $host) {
 }
 
 try {
-    $adapter->setDnsRecords($inventoryDomain, $records);
+    echo "Setting DNS records on infra domain: $infraDomain\n";
+    $adapter->setDnsRecords($infraDomain, $records);
 } catch (\Exception $e) {
     echo $e->getMessage() . PHP_EOL;
     exit(-1);
@@ -61,6 +62,10 @@ function getTransIPAdapter()
     if (false === $key) {
         throw new \RuntimeException("No 'TRANSIP_KEY' environment variable provided. Please check Config.");
     }
+    if (!file_exists($key)) {
+        throw new \RuntimeException("'TRANSIP_KEY' is not pointing to a valid key file: " . $key);
+    }
+    $key = file_get_contents($key);
 
     return new TransIPAdapter($username, $key);
 }
