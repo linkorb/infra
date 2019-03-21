@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+use Badcow\DNS\AlignedBuilder;
+use Badcow\DNS\Classes;
+use Badcow\DNS\Parser\RDataTypes;
+use Badcow\DNS\Rdata\Factory;
+use Badcow\DNS\ResourceRecord;
+use Badcow\DNS\Zone;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/record-generator.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+getEnvironment();
+
+$infraDomain = getenv('INFRA_DOMAIN');
+if (false === $infraDomain) {
+    throw new \RuntimeException("No 'INFRA_DOMAIN' environment variable provided. Please check Config.");
+}
+
+$records = generateRecords();
+
+$domain = getenv('INFRA_DOMAIN') . '.';
+
+$zone = new Zone($domain);
+$zone->setDefaultTtl(3600);
+
+$soa = new ResourceRecord;
+$soa->setClass(Classes::INTERNET);
+$soa->setName('@');
+$soa->setRdata(Factory::Soa(
+    'ns.' . $domain,
+    'hostmaster.' . $domain,
+    time(),
+    3600,
+    14400,
+    604800,
+    3600
+));
+
+$zone->addResourceRecord($soa);
+
+foreach ($records as $record) {
+    $newRecord = new ResourceRecord();
+    $newRecord->setClass(Classes::INTERNET);
+    switch ($record->getType()) {
+        case RDataTypes::TYPE_A:
+            $newRecord->setName($record->getName());
+            $newRecord->setRdata(Factory::A($record->getValue()));
+            break;
+        case RDataTypes::TYPE_AAAA:
+            $newRecord->setName($record->getName());
+            $newRecord->setRdata(Factory::Aaaa($record->getValue()));
+            break;
+        case RDataTypes::TYPE_CNAME:
+            $newRecord->setName($record->getName());
+            $newRecord->setRdata(Factory::Cname($record->getValue()));
+            break;
+        case RDataTypes::TYPE_MX:
+            $newRecord->setName('@');
+            $newRecord->setRdata(Factory::Mx(10, $record->getValue()));
+            break;
+        case RDataTypes::TYPE_NS:
+            $newRecord->setName($domain);
+            $newRecord->setRdata(Factory::Ns($record->getValue()));
+            break;
+        case RDataTypes::TYPE_TXT:
+            $newRecord->setName($record->getName());
+            $newRecord->setRdata(Factory::txt($record->getValue()));
+            break;
+        case RDataTypes::TYPE_SRV:
+            $newRecord->setName($record->getName());
+            $newRecord->setRdata(Factory::Srv(0, 5, 65534, $record->getValue()));
+            break;
+        default:
+            throw new RuntimeException('Unsupported Record Type');
+    }
+    $newRecord->setTtl($record->getTtl());
+    $zone->addResourceRecord($newRecord);
+}
+
+echo AlignedBuilder::build($zone);

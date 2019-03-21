@@ -5,9 +5,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/record-generator.php';
 
 use DnsX\Adapter\TransIPAdapter;
-use DnsX\Model\DnsRecord;
-use Infra\Sdk\Utils;
-use Symfony\Component\Dotenv\Dotenv;
 
 $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
@@ -47,10 +44,4 @@ function getTransIPAdapter()
     $key = file_get_contents($key);
 
     return new TransIPAdapter($username, $key);
-}
-
-function getEnvironment()
-{
-    $dotenv = new Dotenv();
-    $dotenv->load(__DIR__ . '/../../.env');
 }
