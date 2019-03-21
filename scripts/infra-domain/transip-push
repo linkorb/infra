@@ -12,9 +12,9 @@ $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
 getEnvironment();
 
-$infraDomain = getenv('TRANSIP_INFRA_DOMAIN');
+$infraDomain = getenv('INFRA_DOMAIN');
 if (false === $infraDomain) {
-    throw new \RuntimeException("No 'TRANSIP_INFRA_DOMAIN' environment variable provided. Please check Config.");
+    throw new \RuntimeException("No 'INFRA_DOMAIN' environment variable provided. Please check Config.");
 }
 
 $adapter = getTransIPAdapter();
