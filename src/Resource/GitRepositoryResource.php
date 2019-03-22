@@ -78,7 +78,7 @@ class GitRepositoryResource extends AbstractResource
     {
         $url = $this->getUrl();
 
-        preg_match('~^(.+)(@|\://)([^/\:@]+)(\:|/)([^/\.\:]+)/([^\./]+)\.git$~', $url, $matches);
+        preg_match('~^(.+)(@|\://)([^/\:@]+)(\:|/)([^/\.\:]+)/([^/]+)\.git$~', $url, $matches);
 
         if (7 !== count($matches)) {
             throw new \RuntimeException("Can't parse repository url");
