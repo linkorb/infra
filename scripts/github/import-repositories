@@ -1,0 +1,152 @@
+#!/usr/bin/env php
+<?php
+
+use Github\Api\CurrentUser;
+use Github\Api\Organization;
+use Github\Api\User;
+use Github\Client;
+use Github\ResultPager;
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Yaml\Yaml;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+getEnvironment();
+
+$folder = prepareDirectory();
+
+$client = prepareClient();
+
+$api = prepareApi($client);
+
+$paginator = new ResultPager($client);
+$repositories = $paginator->fetchAll($api['clientApi'], 'repositories', $api['parameters']);
+
+$filesCount = 0;
+foreach ($repositories as $repository) {
+    $filename = '/' . getPreparedRepositoryName($repository) . '.yaml';
+    $dump = Yaml::dump(prepareRepositoryData($repository), 10);
+    if (!file_exists($folder . $filename)) {
+        file_put_contents($folder . $filename, "---\n" . $dump);
+        $filesCount++;
+    }
+}
+
+echo $filesCount . ' files have been written' . PHP_EOL;
+
+function getEnvironment()
+{
+    $dotenv = new Dotenv();
+    $dotenv->load(__DIR__ . '/../../.env');
+}
+
+function prepareDirectory()
+{
+    $basePath = getenv('INFRA_CONFIG');
+    if (false === $basePath) {
+        throw new \RuntimeException("No 'INFRA_CONFIG' environment variable provided. Please check Config.");
+    }
+
+    $folder = $basePath . '/resources/GitRepository';
+
+    if (
+        !is_dir($folder) &&
+        !mkdir($concurrentDirectory = $folder, 0777, true) &&
+        !is_dir($concurrentDirectory)
+    ) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+    }
+
+    return $folder;
+}
+
+function prepareClient()
+{
+    $username = getenv('GITHUB_USERNAME');
+    if (false === $username) {
+        throw new \RuntimeException("No 'GITHUB_USERNAME' environment variable provided. Please check Config.");
+    }
+
+    $secret = getenv('GITHUB_SECRET');
+    if (false === $secret) {
+        throw new \RuntimeException("No 'GITHUB_SECRET' environment variable provided. Please check Config.");
+    }
+
+    $authMethod = getenv('GITHUB_AUTH_METHOD');
+    if (false === $authMethod) {
+        throw new \RuntimeException("No 'GITHUB_AUTH_METHOD' environment variable provided. Please check Config.");
+    }
+
+    $client = new Client();
+    $client->authenticate($username, $secret, $authMethod);
+
+    return $client;
+}
+
+function prepareApi(Client $client)
+{
+    $accountName = getenv('GITHUB_ACCOUNT');
+    if (false === $accountName) {
+        throw new \RuntimeException("No 'GITHUB_ACCOUNT' environment variable provided. Please check Config.");
+    }
+
+    try {
+        $account = $client->api('organization')->show($accountName);
+    } catch (Exception $e) {
+        $account = $client->api('user')->show($accountName);
+    }
+
+    if ('Organization' === $account['type']) {
+        /** @var Organization $clientApi */
+        $clientApi = $client->api('organization');
+        $parameters = [
+            $accountName,
+            'all',
+        ];
+    } else if ('User' === $account['type']) {
+        if ($accountName === getenv('GITHUB_USERNAME')) {
+            /** @var CurrentUser $clientApi */
+            $clientApi = $client->api('me');
+            $parameters = [
+                'all',
+            ];
+        } else {
+            /** @var User $clientApi */
+            $clientApi = $client->api('user');
+            $parameters = [
+                $accountName,
+                'all',
+            ];
+        }
+    } else {
+        throw new RuntimeException('Unknown Account Type');
+    }
+
+    return [
+        'clientApi'  => $clientApi,
+        'parameters' => $parameters,
+    ];
+}
+
+function getPreparedRepositoryName($repository)
+{
+    return 'github.com__' . $repository['owner']['login'] . '__' . $repository['name'];
+}
+
+function prepareRepositoryData($repository)
+{
+    $data = [
+        'kind'     => 'GitRepository',
+        'metadata' => [
+            'name'        => getPreparedRepositoryName($repository),
+            'description' => $repository['description'],
+        ],
+        'spec'     => [
+            'url' => $repository['ssh_url'],
+        ],
+    ];
+
+    return $data;
+}

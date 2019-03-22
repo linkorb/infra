@@ -25,7 +25,9 @@
         "geekdevs/cli-highlighter": "^1.0.3",
         "linkorb/dnsx": "^1.0",
         "symfony/serializer": "^4.2",
-        "badcow/dns": "^2.2"
+        "badcow/dns": "^2.2",
+        "php-http/guzzle6-adapter": "^1.1",
+        "knplabs/github-api": "^2.0"
     },
     "require-dev": {
         "linkorb/autotune": "~1.0"
