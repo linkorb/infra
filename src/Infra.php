@@ -34,6 +34,7 @@ class Infra
         $this->registerType(Resource\DnsDomainResource::class);
         $this->registerType(Resource\DnsRecordResource::class);
         $this->registerType(Resource\QueryResource::class);
+        $this->registerType(Resource\GitRepositoryResource::class);
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([
