@@ -33,6 +33,11 @@ class AnsibleExportInventoryCommand extends AbstractCommand
                     $data[$hostGroup->getName()]['hosts'][] = $host->getName();
                 }
             }
+            $vars = $hostGroup->getSpec()['vars'] ?? [];
+            if (count($vars)>0) {
+                $data[$hostGroup->getName()]['vars']=$vars;
+            }
+
             if (count($hostGroup->getHosts())>0) {
                 foreach ($hostGroup->getChildHostGroups() as $childHostGroup) {
                     $data[$hostGroup->getName()]['children'][] = $childHostGroup->getName();
@@ -41,10 +46,14 @@ class AnsibleExportInventoryCommand extends AbstractCommand
         }
         $hostvars = [];
         foreach ($infra->getResourcesByType('Host') as $host) {
-            $hostvars[$host->getName()] = [
+            $vars = $host->getSpec()['vars'] ?? [];
+            $vars = array_merge_recursive($vars, [
+                'public_ip' => $host->getPublicIp(),
+                'private_ip' => $host->getPrivateIp(),
                 'ansible_host' => $host->getPublicIp(),
                 'ansible_user' => $host->getSshUsername(),
-            ];
+            ]);
+            $hostvars[$host->getName()] = $vars;
         }
         $data['_meta']['hostvars'] = $hostvars;
         $output->writeLn(json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));

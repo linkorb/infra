@@ -48,6 +48,11 @@ abstract class AbstractResource implements ResourceInterface
         return $this->description;
     }
 
+    public function getSpec()
+    {
+        return $this->spec;
+    }
+
     public function offsetSet($offset, $value) {
         throw new RuntimeException("Read only array access");
     }
