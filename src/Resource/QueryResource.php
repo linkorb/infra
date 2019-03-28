@@ -67,11 +67,11 @@ class QueryResource
         $res['get' . $infra->getInflector()->pluralize($typeName)] = [
             'type'        => Type::listOf($infra->getType($typeName)),
             'args'        => [
-                'name' => Type::nonNull(Type::string()),
+                'names' => Type::nonNull(Type::string()),
             ],
             'description' => 'List hosts using the host expansion algorithm',
             'resolve'     => function ($root, $args) use ($infra, $typeName) {
-                return $infra->getHosts($args['name']);
+                return $infra->getHosts($args['names']);
             },
         ];
 
