@@ -38,7 +38,7 @@ class Infra
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([
-            'query' => $this->getType('Query')
+            'query' => $this->getType('Query'),
         ]);
     }
 
@@ -54,17 +54,25 @@ class Infra
 
     public function registerType(string $className): void
     {
+        $name = $this->getTypeName($className);
+        $this->typeClassMap[$name] = $className;
+    }
+
+    public function getTypeName(string $className): string
+    {
         $name = (new \ReflectionClass($className))->getShortName();
         $name = str_replace('Resource', '', $name);
-        $this->typeClassMap[$name] = $className;
+
+        return $name;
     }
 
     public function getTypeNames(): array
     {
         $res = [];
-        foreach ($this->typeClassMap as $key=>$value) {
+        foreach ($this->typeClassMap as $key => $value) {
             $res[] = $key;
         }
+
         return $res;
     }
 
@@ -79,6 +87,7 @@ class Infra
             $obj = new ObjectType($config);
             $this->types[$name] = $obj;
         }
+
         return $this->types[$name];
     }
 
@@ -92,17 +101,21 @@ class Infra
         if (!$this->hasType($name)) {
             throw new Exception\UnknownResourceTypeException($name);
         }
+
         return $this->typeClassMap[$name];
     }
 
-    public function getCapitals($str) {
-        if(preg_match_all('#([A-Z]+)#',$str,$matches))
-            return implode('',$matches[1]);
-        else
+    public function getCapitals($str)
+    {
+        if (preg_match_all('#([A-Z]+)#', $str, $matches)) {
+            return implode('', $matches[1]);
+        } else {
             return false;
+        }
     }
 
-    public function getTypeAliases($typeName) {
+    public function getTypeAliases($typeName)
+    {
         $capitals = $this->getCapitals($typeName);
         $res = [
             $capitals,
@@ -112,6 +125,7 @@ class Infra
             $this->inflector->pluralize($typeName),
             lcfirst($this->inflector->pluralize($typeName)),
         ];
+
         return $res;
     }
 
@@ -123,6 +137,7 @@ class Infra
                 return $typeName;
             }
         }
+
         return null;
     }
 
@@ -137,12 +152,14 @@ class Infra
             throw new Exception\UnknownResourceException("$typeName/$name");
         }
         $typeResources = $this->getResourcesByType($typeName);
+
         return $typeResources[$name] ?? null;
     }
 
     public function hasResource(string $typeName, string $name): bool
     {
         $typeResources = $this->getResourcesByType($typeName);
+
         return isset($typeResources[$name]);
     }
 
@@ -156,11 +173,13 @@ class Infra
     //     return $this->resources;
     // }
 
-    private function rglob($pattern, $flags = 0) {
-        $files = glob($pattern, $flags); 
-        foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-            $files = array_merge($files, $this->rglob($dir.'/'.basename($pattern), $flags));
+    private function rglob($pattern, $flags = 0)
+    {
+        $files = glob($pattern, $flags);
+        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+            $files = array_merge($files, $this->rglob($dir . '/' . basename($pattern), $flags));
         }
+
         return $files;
     }
 
@@ -172,7 +191,7 @@ class Infra
         // === Load resources ===
         $filenames = $this->rglob($location . '/resources/*.yaml');
         foreach ($filenames as $filename) {
-            if (basename($filename)[0]!='_') { // allow to quickly disable a configuration by prefixing it with an underscore
+            if (basename($filename)[0] != '_') { // allow to quickly disable a configuration by prefixing it with an underscore
                 $this->loadResourceFile($filename);
             }
         }
@@ -187,7 +206,7 @@ class Infra
         $this->scanScripts();
 
         return true;
-       
+
     }
 
     public function validate()
@@ -234,6 +253,7 @@ class Infra
         }
         if ($this->hasResource('HostGroup', $name)) {
             $hostGroup = $this->getResource('HostGroup', $name);
+
             return $hostGroup->getHosts();
         }
         if ($this->hasResource('Host', $name)) {
@@ -242,7 +262,7 @@ class Infra
         throw new Exception\UnknownHostsException($name);
     }
 
-    /** 
+    /**
      * Pass in name(s) as a string, csv or array of strings. Names can be host and/or hostgroup names
      */
     public function getHosts($names): array
@@ -255,20 +275,21 @@ class Infra
         }
         if (is_string($names)) {
             $names = explode(',', $names); // turn into array
-            foreach ($names as $i=>$name) {
+            foreach ($names as $i => $name) {
                 $names[$i] = trim($name);
             }
         }
         if (!is_array($names)) {
-            throw new RuntimeException("undefined type (not string or array) passed to infra getHosts");
+            throw new RuntimeException('undefined type (not string or array) passed to infra getHosts');
         }
         $res = [];
-        foreach ($names as $i=>$name) {
+        foreach ($names as $i => $name) {
             $hosts = $this->getHostsAuto($name);
             foreach ($hosts as $host) {
                 $res[$host->getName()] = $host;
             }
         }
+
         return $res;
     }
 
@@ -280,6 +301,7 @@ class Infra
         //     'IdentitiesOnly' => 'yes',
         // ));
         $builder = new ClientBuilder($config);
+
         return $builder;
     }
 
@@ -299,7 +321,7 @@ class Infra
             $tmpfile,
             $scp->getRemotePath($destination)
         );
-        if ($scp->getExitCode()!=0) {
+        if ($scp->getExitCode() != 0) {
             throw new RuntimeException($scp->getErrorOutput());
         }
         unlink($tmpfile);
@@ -318,8 +340,8 @@ class Infra
                 $filename = realpath($filename);
                 if (is_executable($filename)) {
                     $info = pathinfo($filename);
-                    
-                    $name =  $info['filename'];
+
+                    $name = $info['filename'];
                     $prefix = basename($info['dirname']);;
                     if ($prefix != 'scripts') {
                         $name = $prefix . ':' . $name;
