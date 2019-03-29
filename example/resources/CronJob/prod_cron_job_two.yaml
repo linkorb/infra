@@ -1,0 +1,10 @@
+---
+kind: CronJob
+metadata:
+    name: prod_cron_job_two
+    description: "Echo Another Hello for Prod"
+spec:
+    hosts: prod
+    rule: "40    18    *    *    * "
+    user: root
+    command: "echo 'hello Prod Two' >> /tmp/hello.log"
