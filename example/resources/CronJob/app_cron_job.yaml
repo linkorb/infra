@@ -1,0 +1,10 @@
+---
+kind: CronJob
+metadata:
+    name: app_cron_job
+    description: "Echo Hello for App"
+spec:
+    hosts: app
+    rule: "30    18    *    *    * "
+    user: root
+    command: "echo 'hello App' >> /tmp/hello.log"
