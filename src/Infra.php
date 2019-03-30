@@ -36,6 +36,7 @@ class Infra
         $this->registerType(Resource\QueryResource::class);
         $this->registerType(Resource\GitRepositoryResource::class);
         $this->registerType(Resource\CronJobResource::class);
+        $this->registerType(Resource\FileResource::class);
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([
