@@ -11,6 +11,10 @@ $hostName = $args->args['<name>'];
 
 $allRules = getAllRules();
 
+if (empty($allRules)) {
+    return 0;
+}
+
 $rulesAssigned = getRulesAssignedToHost($hostName, $allRules);
 
 echo getCronOutput($rulesAssigned);
@@ -78,7 +82,9 @@ function getCronOutput($rulesAssigned)
             $out .= '# Cronjob generated on ' . date('Y-m-d H:i') .
                 ' for ' . $rule['hosts'] . ' group' . PHP_EOL;
 
-            $out .= '# ' . $rule['description'] . PHP_EOL;
+            if (!empty($rule['description'])) {
+                $out .= '# ' . $rule['description'] . PHP_EOL;
+            }
 
             $out .= $rule['rule'] . str_repeat(' ', 4) .
                 $rule['user'] . str_repeat(' ', 4) .
