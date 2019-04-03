@@ -1,0 +1,96 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Sdk\Utils;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+$hostName = $args->args['<name>'];
+
+$allRules = getAllRules();
+
+if (empty($allRules)) {
+    return 0;
+}
+
+$rulesAssigned = getRulesAssignedToHost($hostName, $allRules);
+
+echo getCronOutput($rulesAssigned);
+
+function getAllRules()
+{
+    $query = <<<GRAPHQL
+query {
+    allCronJobs {
+        name,
+        description,
+        hosts,
+        user,
+        rule,
+        command
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    $allRules = [];
+
+    foreach ($data['data']['allCronJobs'] as $cronJob) {
+        $allRules[$cronJob['hosts']][$cronJob['name']] = $cronJob;
+    }
+
+    return $allRules;
+}
+
+function getRulesAssignedToHost($hostName, $allRules)
+{
+    $query = <<<GQL
+query {
+    getHosts(names: "$hostName") {
+        name,
+        hostGroups {
+            name
+        },
+    }
+}
+GQL;
+
+    $data = Utils::query($query);
+
+    $rulesAssigned = [];
+
+    foreach ($data['data']['getHosts'] as $item) {
+        foreach ($item['hostGroups'] as $hostGroup) {
+            if (array_key_exists($hostGroup['name'], $allRules)) {
+                $rulesAssigned[] = $allRules[$hostGroup['name']];
+            }
+        }
+    }
+
+    return $rulesAssigned;
+}
+
+function getCronOutput($rulesAssigned)
+{
+    $out = '';
+
+    foreach ($rulesAssigned as $rules) {
+        foreach ($rules as $rule) {
+            $out .= '# Cronjob generated on ' . date('Y-m-d H:i') .
+                ' for ' . $rule['hosts'] . ' group' . PHP_EOL;
+
+            if (!empty($rule['description'])) {
+                $out .= '# ' . $rule['description'] . PHP_EOL;
+            }
+
+            $out .= $rule['rule'] . str_repeat(' ', 4) .
+                $rule['user'] . str_repeat(' ', 4) .
+                $rule['command'] . str_repeat(PHP_EOL, 2);
+        }
+    }
+
+    return $out;
+}
