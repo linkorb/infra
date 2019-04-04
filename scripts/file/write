@@ -16,7 +16,15 @@ $fileData = getFileData($fileName)['data']['file'];
 
 $groupName = $fileData['hosts'];
 
+if (empty($fileData) || empty($groupName)) {
+    return 0;
+}
+
 $hosts = $infra->getHosts($groupName);
+
+if (empty($hosts)) {
+    return 0;
+}
 
 writeFileToHosts($fileData, $hosts, $infra);
 
@@ -37,7 +45,7 @@ function getFileData($fileName)
 {
     $query = <<<GRAPHQL
 query {
-    files: file(name: "$fileName") {
+    file(name: "$fileName") {
         name,
         description,
         hosts,
