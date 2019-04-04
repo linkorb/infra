@@ -5,7 +5,6 @@ namespace Infra;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Schema;
 use Infra\Resource\ResourceInterface;
-use Infra\Resource\AbstractResource;
 use Symfony\Component\Yaml\Yaml;
 use Infra\Exception;
 use Infra\Resource\HostResource;
@@ -13,7 +12,6 @@ use Doctrine\Common\Inflector\Inflector;
 use SSHClient\ClientConfiguration\ClientConfiguration;
 use SSHClient\ClientBuilder\ClientBuilder;
 use RuntimeException;
-use Infra\Script;
 
 class Infra
 {
@@ -36,6 +34,7 @@ class Infra
         $this->registerType(Resource\QueryResource::class);
         $this->registerType(Resource\GitRepositoryResource::class);
         $this->registerType(Resource\CronJobResource::class);
+        $this->registerType(Resource\FileResource::class);
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([

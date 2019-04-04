@@ -1,0 +1,81 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Infra;
+use Infra\Sdk\Utils;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+$infra = getInfra();
+
+$fileName = $args->args['<name>'];
+
+$fileData = getFileData($fileName)['data']['file'];
+
+$groupName = $fileData['hosts'];
+
+if (empty($fileData) || empty($groupName)) {
+    return 0;
+}
+
+$hosts = $infra->getHosts($groupName);
+
+if (empty($hosts)) {
+    return 0;
+}
+
+writeFileToHosts($fileData, $hosts, $infra);
+
+function getInfra()
+{
+    $infra = new Infra();
+    $infraConfig = getenv('INFRA_CONFIG');
+    if (!$infraConfig) {
+        $infraConfig = __DIR__ . '/../../example';
+    }
+    $infra->load($infraConfig);
+    $infra->validate();
+
+    return $infra;
+}
+
+function getFileData($fileName)
+{
+    $query = <<<GRAPHQL
+query {
+    file(name: "$fileName") {
+        name,
+        description,
+        hosts,
+        filename,
+        content
+    }
+}
+GRAPHQL;
+
+    return Utils::query($query);
+}
+
+function writeFileToHosts($fileData, $hosts, Infra $infra)
+{
+    foreach ($hosts as $host) {
+        $tmpFilename = tempnam(sys_get_temp_dir(), 'file_write_');
+        file_put_contents($tmpFilename, $fileData['content']);
+
+        $scpBuilder = $infra->getSshBuilder($host);
+        $scp = $scpBuilder->buildSecureCopyClient();
+
+        $remoteFilename = $fileData['filename'];
+
+        $scp->copy(
+            $tmpFilename,
+            $scp->getRemotePath($remoteFilename)
+        );
+
+        if ($scp->getExitCode() !== 0) {
+            throw new RuntimeException($scp->getErrorOutput());
+        }
+    }
+}
