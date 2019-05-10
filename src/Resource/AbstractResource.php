@@ -22,14 +22,27 @@ abstract class AbstractResource implements ResourceInterface
     public static function fromConfig(Infra $infra, array $config)
     {
         $resource = new static($infra);
-        $resource->typeName = $config['kind'];
-        $metadata = $config['metadata'] ?? [];
-        $resource->name = $metadata['name'] ?? null;
-        if (!$resource->name) {
-            throw new RuntimeException("No name specified in resource config");
+        if (!isset($config['metadata'])) {
+            throw new RuntimeException("Metadata missing on resource");
         }
+
+        $metadata = $config['metadata'];
+        if (!isset($metadata['name'])) {
+            throw new RuntimeException("Name missing on resource");
+        }
+        $resource->name = $metadata['name'];
+
+        if (!isset($config['kind'])) {
+            throw new RuntimeException("Kind missing. " . $resource->name);
+        }
+        $resource->typeName = $config['kind'];
+
+
         $resource->description = $config['metadata']['description'] ?? null;
-        $resource->spec = $config['spec'];
+        if (!isset($config['spec'])) {
+            throw new RuntimeException("Spec missing. " . $resource->name);
+        }
+        $resource->spec = $config['spec'] ?? [];
         return $resource;
     }
 
