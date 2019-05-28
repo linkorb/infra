@@ -1,0 +1,16 @@
+---
+kind: File
+metadata:
+    name: my-file1
+    description: Description Here
+spec:
+    hosts: prod
+    filename: /tmp/my-file1.txt
+    content: |
+        ## Multiline Header
+
+        * multiline list
+        * multiline list
+
+        multiline text
+        multiline text
