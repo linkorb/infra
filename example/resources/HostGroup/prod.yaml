@@ -5,4 +5,4 @@ metadata:
   description: All hosts in the production environment
   labels:
     color: green
-spec: ~
+spec: []
