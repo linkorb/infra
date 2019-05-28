@@ -1,0 +1,5 @@
+query {
+    getHosts(names: "prod") {
+        name
+    }
+}
