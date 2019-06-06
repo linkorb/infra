@@ -1,0 +1,89 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Sdk\Utils;
+use Infra\Service\HtmlGeneratorService;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+$generator = new HtmlGeneratorService(
+    __DIR__ . '/../../doc/html/'
+);
+
+$generator->checkDirectory();
+$generator->deleteObsoleteFiles();
+$generator->generateIndex();
+
+$hosts = getHosts();
+$generator->generateHosts($hosts);
+
+$hostGroups = getHostGroups();
+$generator->generateHostGroups($hostGroups);
+
+$firewallRules = getFirewallRules();
+$generator->generateFirewallRules($firewallRules);
+
+
+function getHosts()
+{
+    $query = <<<GRAPHQL
+query {
+    hosts: allHosts {
+        name
+        fqdn
+        publicIp
+        privateIp
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    return $data['data']['hosts'];
+}
+
+function getHostGroups()
+{
+    $query = <<<GRAPHQL
+query {
+    hostGroups: allHostGroups {
+        name
+        description
+        parentHostGroup {
+            name
+        }
+        hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    return $data['data']['hostGroups'];
+}
+
+function getFirewallRules()
+{
+    $query = <<<GRAPHQL
+query {
+    firewallRules: allFirewallRules {
+        name
+        template
+        hosts {
+            name
+        }
+        remoteHosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    return $data['data']['firewallRules'];
+}

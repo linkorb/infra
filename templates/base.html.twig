@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Infra::{{ title }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/litera/bootstrap.min.css" rel="stylesheet" integrity="sha384-D/7uAka7uwterkSxa2LwZR7RJqH2X6jfmhkJ0vFPGUtPyBMF2WMq9S+f9Ik5jJu1" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="./index.html">Infra</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02
+" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="./hosts.html" class="nav-link">Hosts</a>
+                </li>
+                <li class="nav-item">
+                    <a href="./host-groups.html" class="nav-link">Host Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a href="./firewall-rules.html" class="nav-link">Firewall Rules</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% block content %}{% endblock %}
+</body>
+</html>

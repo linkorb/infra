@@ -1,0 +1,10 @@
+{% extends "base.html.twig" %}
+{% block content %}
+    {% if firewallRules %}
+        <ul>
+            {% for firewallRule in firewallRules %}
+                <li>{{ firewallRule.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
