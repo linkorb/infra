@@ -1,0 +1,10 @@
+---
+kind: Host
+metadata:
+  name: docker-engine-host1
+  description: Docker Engine One
+spec:
+  os: xenial
+  publicIp: 192.168.1.2
+  privateIp: 10.0.1.1
+  hostGroups: prod-west, app

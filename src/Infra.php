@@ -36,6 +36,8 @@ class Infra
         $this->registerType(Resource\CronJobResource::class);
         $this->registerType(Resource\FileResource::class);
         $this->registerType(Resource\OsReleaseResource::class);
+        $this->registerType(Resource\DockerEngineResource::class);
+        $this->registerType(Resource\DockerAppResource::class);
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([

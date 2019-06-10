@@ -37,6 +37,12 @@ $generator->generateUsers($users);
 $domains = getDnsDomains();
 $generator->generateDnsDomains($domains);
 
+$monitoringChecks = getMonitoringChecks();
+$generator->generateMonitoringChecks($monitoringChecks);
+
+$dockerEngines = getDockerEngines();
+$generator->generateDockerEngines($dockerEngines);
+
 function getHosts()
 {
     $query = <<<GRAPHQL
@@ -213,4 +219,49 @@ GRAPHQL;
     }
 
     return $data['data']['domains'];
+}
+
+function getMonitoringChecks()
+{
+    $query = <<<GRAPHQL
+query {
+    allMonitoringChecks {
+        name
+        command
+        interval
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['allMonitoringChecks'];
+}
+
+function getDockerEngines()
+{
+    $query = <<<GRAPHQL
+query {
+    allDockerEngines {
+        name
+        address
+        port
+        apps {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['allDockerEngines'];
 }

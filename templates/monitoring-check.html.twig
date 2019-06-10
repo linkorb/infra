@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Monitoring Check: {{ record.name }}
+    </h1>
+    <dl class="dl-horizontal">
+        <dt>Name</dt>
+        <dd>{{ record.name }}</dd>
+        <dt>Command</dt>
+        <dd><i>{{ record.command }}</i></dd>
+        <dt>Interval</dt>
+        <dd>{{ record.interval }}</dd>
+    </dl>
+{% endblock %}
