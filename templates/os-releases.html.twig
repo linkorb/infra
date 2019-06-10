@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>
+        OS Releases
+        <small>{{ records|length }}</small>
+    </h1>
+    <ul>
+        {% for record in records %}
+            <li>
+                <a href="./os-releases:{{ record.name }}.html">{{ record.displayName }}</a> ({{ record.hosts|length }} hosts)
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

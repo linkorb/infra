@@ -1,36 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Infra::{{ title }}</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/litera/bootstrap.min.css" rel="stylesheet" integrity="sha384-D/7uAka7uwterkSxa2LwZR7RJqH2X6jfmhkJ0vFPGUtPyBMF2WMq9S+f9Ik5jJu1" crossorigin="anonymous">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content=""/>
+    <title>Infra</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/simplex/bootstrap.min.css" rel="stylesheet" integrity="sha384-C/fi3Y7sgGQc3Lxu71QIVbBJ9iNQ/11o+YZNg2GRUrRrJayHEMpEc2I/jFSkMXAW" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <style>
+        #content {
+            padding-top: 20px;
+        }
+
+        #sidebar {
+            padding-top: 20px;
+            padding-bottom: 50px;
+            min-height: 1000px;
+        }
+
+        .logo-large {
+            width: 128px;
+            float: right;
+            margin-left: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .screen-help-toggle {
+            float: right;
+        }
+
+        .screen-help-toggle a i {
+            font-size: 200%;
+            border: 1px solid #000;
+            border-radius: 100px;
+            padding-left: 6px;
+            padding-right: 6px;
+            color: #404040;
+        }
+
+        .screen-help {
+            display: none;
+        }
+
+        h3 {
+            font-size: 140%;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand navbar-light bg-light">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="./index.html">Infra</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02
-" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <a href="./index.html" class="navbar-brand">INFRA DOC</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar2">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a href="./hosts.html" class="nav-link">Hosts</a>
-                </li>
-                <li class="nav-item">
-                    <a href="./host-groups.html" class="nav-link">Host Groups</a>
-                </li>
-                <li class="nav-item">
-                    <a href="./firewall-rules.html" class="nav-link">Firewall Rules</a>
-                </li>
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="text-light">Generated {{ "now"|date('d/M/Y H:i') }}</li>
             </ul>
         </div>
     </div>
 </nav>
-{% block content %}{% endblock %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 bg-light" id="sidebar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">Home</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./cards.html">Cards</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./wiki.html">Wiki</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./hosts.html">Hosts</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./host-groups.html">Host Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./os-releases.html">Operating systems</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./firewall-rules.html">Firewall rules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./providers.html">Providers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./repositories.html">Repositories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./users.html">Users</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./deployments.html">Deployments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./databases.html">Databases</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./database-servers.html">Database Servers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./domains.html">Domains</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./monitoring-checks.html">Monitoring checks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./backups.html">Backups</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./docker-engines.html">Docker engines</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9 content" id="content">
+            <div class="screen-help-toggle">
+                <a href="#" onclick="$('.screen-help').toggle()">
+                    <i class="fa fa-question"></i>
+                </a>
+            </div>
+            {% block body %}{% endblock body %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.data-table').DataTable({
+            "paging": false
+        });
+        var screenHelp = $('.screen-help');
+        if (!screenHelp.length) {
+            $('.screen-help-toggle').toggle(); // hide
+        }
+    });
+</script>
 </body>
 </html>

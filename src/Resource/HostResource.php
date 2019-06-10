@@ -4,11 +4,11 @@ namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
 use Infra\Infra;
+use RuntimeException;
 
 class HostResource extends AbstractResource
 {
     protected $hostGroups = null; // cache
-
 
     public function getPublicIp()
     {
@@ -35,6 +35,22 @@ class HostResource extends AbstractResource
         return $this->spec['sshUsername'] ?? 'root';
     }
 
+    public function getOs()
+    {
+        return $this->spec['os'] ?? null;
+    }
+
+    public function getOsRelease()
+    {
+        $name = $this->getOs();
+
+        if (null === $name) {
+            return null;
+        }
+
+        return $this->infra->getResource('OsRelease', $name);
+    }
+
     public function getLocalHostGroupNames(): array
     {
         $hostGroups = $this->spec['hostGroups'];
@@ -45,12 +61,13 @@ class HostResource extends AbstractResource
             $hostGroups = explode(',', $hostGroups);
         }
         if (!is_array($hostGroups)) {
-            throw new RuntimeException("undefined type for hostGroups");
+            throw new RuntimeException('undefined type for hostGroups');
         }
-        foreach ($hostGroups as $i=>$name) {
+        foreach ($hostGroups as $i => $name) {
             $name = trim($name);
             $hostGroups[$i] = $name;
         }
+
         return $hostGroups;
     }
 
@@ -59,6 +76,7 @@ class HostResource extends AbstractResource
         if (in_array($groupName, $this->getLocalHostGroupNames())) {
             return true;
         }
+
         return false;
     }
 
@@ -69,6 +87,7 @@ class HostResource extends AbstractResource
         foreach ($groupNames as $groupName) {
             $res[$groupName] = $this->infra->getResource('HostGroup', $groupName);
         }
+
         return $res;
     }
 
@@ -81,6 +100,7 @@ class HostResource extends AbstractResource
                 $hostGroups[$parent->getName()] = $parent;
             }
         }
+
         return $hostGroups;
     }
 
@@ -91,6 +111,7 @@ class HostResource extends AbstractResource
                 return true;
             }
         }
+
         return false;
     }
 
@@ -106,50 +127,64 @@ class HostResource extends AbstractResource
                 }
             }
         }
+
         return $res;
+    }
+
+    public function hasOsReleaseName(string $name): bool
+    {
+        return $this->getOs() === $name;
     }
 
     public static function getConfig(Infra $infra)
     {
         return [
-            'name' => 'Host',
-            'fields' => function() use (&$infra) {
+            'name'   => 'Host',
+            'fields' => function () use (&$infra) {
                 return [
-                    'name' => Type::id(),
-                    'publicIp' => [
-                        'type' => Type::string(),
+                    'name'            => Type::id(),
+                    'os'              => [
+                        'type'        => Type::string(),
+                        'description' => 'Operating system code',
+                    ],
+                    'osRelease'       => [
+                        'type'        => $infra->getType('OsRelease'),
+                        'description' => 'Operating system',
+                    ],
+                    'publicIp'        => [
+                        'type'        => Type::string(),
                         'description' => 'Public IPv4 address',
                     ],
-                    'privateIp' => [
-                        'type' => Type::string(),
+                    'privateIp'       => [
+                        'type'        => Type::string(),
                         'description' => 'Private IPv4 address',
                     ],
-                    'sshUsername' => [
-                        'type' => Type::string(),
+                    'sshUsername'     => [
+                        'type'        => Type::string(),
                         'description' => 'SSH username',
                     ],
-                    'sshAddress' => [
-                        'type' => Type::string(),
+                    'sshAddress'      => [
+                        'type'        => Type::string(),
                         'description' => 'SSH address',
                     ],
-                    'description' => [
-                        'type' => Type::string(),
+                    'description'     => [
+                        'type'        => Type::string(),
                         'description' => 'Description',
                     ],
-                    'fqdn' => [
-                        'type' => Type::string(),
+                    'fqdn'            => [
+                        'type'        => Type::string(),
                         'description' => 'Fully Qualified Domain Name',
                     ],
-                    'hostGroups' => [
-                        'type' => Type::listOf($infra->getType('HostGroup')),
+                    'hostGroups'      => [
+                        'type'        => Type::listOf($infra->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (recursively)',
                     ],
                     'localHostGroups' => [
-                        'type' => Type::listOf($infra->getType('HostGroup')),
+                        'type'        => Type::listOf($infra->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (local only)',
                     ],
                 ];
-            }
+            },
         ];
     }
 
