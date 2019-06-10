@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Host groups
+        <small>{{ records|length }}</small>
+    </h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Hosts</th>
+            <th>Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>
+                    <a href="./host-groups:{{ record.name }}.html">{{ record.name }}</a><br/>
+                    <i class="text-muted">{{ record.description }}</i>
+                </td>
+                <td>
+                    {{ record.members|length }}
+                </td>
+                <td>{{ record.type }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

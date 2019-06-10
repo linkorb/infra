@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>
+        OS Release: {{ osRelease.displayName }}
+        <small>{{ osRelease.name }}</small>
+    </h1>
+
+    <h3>Hosts: {{ osRelease.hosts|length }}</h3>
+    <ul>
+        {% for host in osRelease.hosts %}
+            <li>
+                <a href="./hosts:{{ host.name }}.html">{{ host.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

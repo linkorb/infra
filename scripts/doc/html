@@ -1,0 +1,134 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Sdk\Utils;
+use Infra\Service\HtmlGeneratorService;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Utils::getArguments(__FILE__);
+
+$generator = new HtmlGeneratorService(
+    __DIR__ . '/../../doc/html/'
+);
+
+$generator->checkDirectory();
+$generator->deleteObsoleteFiles();
+$generator->generateIndex();
+
+$hosts = getHosts();
+$generator->generateHosts($hosts);
+
+$hostGroups = getHostGroups();
+$generator->generateHostGroups($hostGroups);
+
+$osReleases = getOsReleases();
+$generator->generateOsReleases($osReleases);
+
+$firewallRules = getFirewallRules();
+$generator->generateFirewallRules($firewallRules);
+
+function getHosts()
+{
+    $query = <<<GRAPHQL
+query {
+    hosts: allHosts {
+        name
+        osRelease {
+            name
+            displayName
+        }
+        fqdn
+        publicIp
+        privateIp
+        memberships: hostGroups {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['hosts'];
+}
+
+function getHostGroups()
+{
+    $query = <<<GRAPHQL
+query {
+    hostGroups: allHostGroups {
+        name
+        description
+        parentHostGroup {
+            name
+        }
+        members: hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['hostGroups'];
+}
+
+function getOsReleases()
+{
+    $query = <<<GRAPHQL
+query {
+    osReleases: allOsReleases {
+        name
+        displayName
+        hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['osReleases'];
+}
+
+function getFirewallRules()
+{
+    $query = <<<GRAPHQL
+query {
+    firewallRules: allFirewallRules {
+        name
+        description
+        template
+        hosts {
+            name
+        }
+        remoteHosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['firewallRules'];
+}
