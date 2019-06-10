@@ -1,0 +1,17 @@
+---
+kind: DockerApp
+metadata:
+    name: docker-app2
+spec:
+    engine: docker-engine1
+    config:
+        version: '3.3'
+        services:
+            db:
+                container_name: wordpress_db
+                image: mysql:5.7
+                volumes:
+                    - db_data:/var/lib/mysql
+                restart: always
+        volumes:
+            db_data:

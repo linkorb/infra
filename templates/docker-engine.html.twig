@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Docker Engine: {{ record.name }}
+    </h1>
+    <dl class="dl-horizontal">
+        <dt>Name</dt>
+        <dd>{{ record.name }}</dd>
+        <dt>Address</dt>
+        <dd>{{ record.address }}</dd>
+        <dt>Port</dt>
+        <dd>{{ record.port }}</dd>
+    </dl>
+
+    {% if record.apps %}
+        <h3>Docker Apps: {{ record.apps|length }}</h3>
+        <ul>
+            {% for app in record.apps %}
+                <li>
+                    <dl>
+                        <dt>Name:</dt>
+                        <dd>{{ app.name }}</dd>
+                    </dl>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

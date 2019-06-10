@@ -251,4 +251,29 @@ class HtmlGeneratorService
             );
         }
     }
+
+    public function generateDockerEngines($dockerEngines): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/docker-engines.html',
+            $this->twig->render(
+                'docker-engines.html.twig',
+                [
+                    'records' => $dockerEngines,
+                ]
+            )
+        );
+
+        foreach ($dockerEngines as $dockerEngine) {
+            file_put_contents(
+                $this->pathOutput . '/docker-engines:' . $dockerEngine['name'] . '.html',
+                $this->twig->render(
+                    'docker-engine.html.twig',
+                    [
+                        'record' => $dockerEngine,
+                    ]
+                )
+            );
+        }
+    }
 }
