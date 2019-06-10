@@ -226,4 +226,29 @@ class HtmlGeneratorService
             );
         }
     }
+
+    public function generateMonitoringChecks($monitoringChecks): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/monitoring-checks.html',
+            $this->twig->render(
+                'monitoring-checks.html.twig',
+                [
+                    'records' => $monitoringChecks,
+                ]
+            )
+        );
+
+        foreach ($monitoringChecks as $monitoringCheck) {
+            file_put_contents(
+                $this->pathOutput . '/monitoring-checks:' . $monitoringCheck['name'] . '.html',
+                $this->twig->render(
+                    'monitoring-check.html.twig',
+                    [
+                        'record' => $monitoringCheck,
+                    ]
+                )
+            );
+        }
+    }
 }
