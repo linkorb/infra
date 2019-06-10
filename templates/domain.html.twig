@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Domain: {{ record.name }}
+    </h1>
+    <dl class="dl-horizontal">
+        <dt>Domain</dt>
+        <dd>{{ record.name }}</dd>
+        <dt>Account</dt>
+        <dd>{{ record.dnsAccount }}</dd>
+    </dl>
+
+    {% if record.dnsRecords %}
+        <h3>DNS Records: {{ record.dnsRecords|length }}</h3>
+        <ul>
+            {% for dnsRecord in record.dnsRecords %}
+                <li>
+                    <dl>
+                        <dt>Name:</dt>
+                        <dd>{{ dnsRecord.name }}</dd>
+                        <dt>Type</dt>
+                        <dd>{{ dnsRecord.type }}</dd>
+                        <dt>TTL</dt>
+                        <dd>{{ dnsRecord.ttl }}</dd>
+                    </dl>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -28,6 +28,15 @@ $generator->generateOsReleases($osReleases);
 $firewallRules = getFirewallRules();
 $generator->generateFirewallRules($firewallRules);
 
+$repositories = getRepositories();
+$generator->generateRepositories($repositories);
+
+$users = getUsers();
+$generator->generateUsers($users);
+
+$domains = getDnsDomains();
+$generator->generateDnsDomains($domains);
+
 function getHosts()
 {
     $query = <<<GRAPHQL
@@ -131,4 +140,77 @@ GRAPHQL;
     }
 
     return $data['data']['firewallRules'];
+}
+
+function getRepositories()
+{
+    $query = <<<GRAPHQL
+query {
+    repositories: allGitRepositories {
+        name
+        description
+        owner: repositoryOwnerName
+        viewUrl
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['repositories'];
+}
+
+function getUsers()
+{
+    $query = <<<GRAPHQL
+query {
+    users: allUsers {
+        name
+        githubLink
+        hasSshPublicKey
+        sshPublicKey
+        hosts {
+            name
+            publicIp
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['users'];
+}
+
+function getDnsDomains()
+{
+    $query = <<<GRAPHQL
+query {
+    domains: allDnsDomains {
+        name
+        dnsAccount
+        dnsRecords {
+            name
+            type
+            ttl
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['domains'];
 }

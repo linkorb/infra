@@ -151,4 +151,79 @@ class HtmlGeneratorService
             );
         }
     }
+
+    public function generateRepositories($repositories): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/repositories.html',
+            $this->twig->render(
+                'repositories.html.twig',
+                [
+                    'records' => $repositories,
+                ]
+            )
+        );
+
+        foreach ($repositories as $repository) {
+            file_put_contents(
+                $this->pathOutput . '/repositories:' . $repository['owner'] . ':' . $repository['name'] . '.html',
+                $this->twig->render(
+                    'repository.html.twig',
+                    [
+                        'record' => $repository,
+                    ]
+                )
+            );
+        }
+    }
+
+    public function generateUsers($users): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/users.html',
+            $this->twig->render(
+                'users.html.twig',
+                [
+                    'records' => $users,
+                ]
+            )
+        );
+
+        foreach ($users as $user) {
+            file_put_contents(
+                $this->pathOutput . '/users:' . $user['name'] . '.html',
+                $this->twig->render(
+                    'user.html.twig',
+                    [
+                        'record' => $user,
+                    ]
+                )
+            );
+        }
+    }
+
+    public function generateDnsDomains($domains): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/domains.html',
+            $this->twig->render(
+                'domains.html.twig',
+                [
+                    'records' => $domains,
+                ]
+            )
+        );
+
+        foreach ($domains as $domain) {
+            file_put_contents(
+                $this->pathOutput . '/domains:' . $domain['name'] . '.html',
+                $this->twig->render(
+                    'domain.html.twig',
+                    [
+                        'record' => $domain,
+                    ]
+                )
+            );
+        }
+    }
 }
