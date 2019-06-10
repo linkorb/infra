@@ -1,0 +1,7 @@
+---
+kind: GitRepository
+metadata:
+    name: github.com__linkorb__schemata
+    description: 'Schemata: database schema powertools'
+spec:
+    url: 'git@github.com:linkorb/schemata.git'
