@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Repository: {{ record.owner }}/{{ record.name }}</h1>
+    <dl class="dl-horizontal">
+        <dt>Name</dt>
+        <dd>{{ record.name }}</dd>
+        <dt>Owner</dt>
+        <dd>{{ record.owner }}</dd>
+        <dt>Description</dt>
+        <dd>{{ record.description }}</dd>
+    </dl>
+
+    <a class="btn btn-secondary" href="{{ record.viewUrl }}" target="_blank">Open on GitHub</a>
+    <a class="btn btn-secondary" href="https://team.linkorb.com/repositories/{{ record.id }}" target="_blank">Open on HQ</a>
+{% endblock %}

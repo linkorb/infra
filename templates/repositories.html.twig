@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Repositories
+        <small>{{ records|length }}</small>
+    </h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>
+                    <i class="fa fa-github"></i>
+                    <span class="text-muted">{{ record.owner }}</span>/<a href="./repositories:{{ record.owner }}:{{ record.name }}.html">{{ record.name }}</a><br/>
+                    <i>{{ record.description }}</i>
+                </td>
+                <td>
+                    -
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

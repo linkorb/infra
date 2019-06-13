@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Users
+        <small>{{ records|length }}</small>
+    </h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>UBID</th>
+            <th>GitHub</th>
+            <th>SSH</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>
+                    <a href="./users:{{ record.name }}.html">{{ record.name }}</a>
+                </td>
+                <td>
+                    {{ record.name }}
+                </td>
+                <td>
+                    <a href="{{ record.githubLink }}" target="_blank">{{ record.githubLink }}</a>
+                </td>
+                <td>
+                    {% if record.hasSshPublicKey %}
+                        Y
+                    {% else %}
+                        N
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

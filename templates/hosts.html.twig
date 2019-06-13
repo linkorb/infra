@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Hosts
+        <small>{{ hosts|length }}</small>
+    </h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Provider</th>
+            <th>OS</th>
+            <th>Public IP</th>
+            <th>Private IP</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for host in hosts %}
+            <tr>
+                <td>
+                    <a href="./hosts:{{ host.name }}.html">{{ host.name }}</a>
+                </td>
+                <td>
+                    {{ host.provider.displayName }}
+                </td>
+                <td>
+                    {{ host.osRelease.displayName }}
+                </td>
+                <td>
+                    {{ host.publicIp }}
+                </td>
+                <td>
+                    {{ host.privateIp }}
+                </td>
+                <td>
+                    {{ host.status }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

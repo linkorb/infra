@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Host: {{ host.name }}</h1>
+    <dl class="dl-horizontal">
+        <dt>Name</dt>
+        <dd>{{ host.name }}</dd>
+        <dt>Public IP</dt>
+        <dd>{{ host.publicIp }}</dd>
+        <dt>Private IP</dt>
+        <dd>{{ host.privateIp|default('-') }}</dd>
+        <dt>OS</dt>
+        <dd>
+            <a href="./os-releases:{{ host.osRelease.name }}.html">{{ host.osRelease.displayName }}</a>
+        </dd>
+        <dt>Provider</dt>
+        <dd>
+            <a href="./providers:{{ host.provider.name }}.html">{{ host.provider.displayName }}</a>
+        </dd>
+    </dl>
+
+    <h3>Host group memberships:</h3>
+    <ul>
+        {% for membership in host.memberships %}
+            <li>
+                <a href="./host-groups:{{ membership.name }}.html">{{ membership.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

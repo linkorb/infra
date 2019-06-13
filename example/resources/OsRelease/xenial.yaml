@@ -1,0 +1,7 @@
+---
+kind: OsRelease
+metadata:
+    name: xenial
+    description:
+spec:
+    displayName: Ubuntu 16.04
