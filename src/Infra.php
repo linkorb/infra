@@ -18,6 +18,10 @@ class Infra
     protected $types = [];
     protected $typeClassMap = [];
     protected $resources = [];
+
+    /**
+     * @var Script[]
+     */
     protected $scripts = [];
     protected $schema;
     protected $scriptPaths = [];
@@ -330,6 +334,9 @@ class Infra
         unlink($tmpfile);
     }
 
+    /**
+     * @return Script[]
+     */
     public function getScripts()
     {
         return $this->scripts;
@@ -341,12 +348,15 @@ class Infra
             $filenames = glob($path . '/{**/*,*}', GLOB_BRACE);
             foreach ($filenames as $filename) {
                 $filename = realpath($filename);
-                if (is_executable($filename)) {
+                if (
+                    is_executable($filename) &&
+                    is_file($filename)
+                ) {
                     $info = pathinfo($filename);
 
                     $name = $info['filename'];
                     $prefix = basename($info['dirname']);;
-                    if ($prefix != 'scripts') {
+                    if ($prefix !== 'scripts') {
                         $name = $prefix . ':' . $name;
                     }
 
@@ -358,7 +368,6 @@ class Infra
                     $script = new Script($name, $filename, $doc);
                     $this->scripts[$script->getName()] = $script;
                 }
-                // echo $filename . PHP_EOL;
             }
         }
     }
