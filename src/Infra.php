@@ -50,6 +50,22 @@ class Infra
         ]);
     }
 
+    /**
+     * @return Infra
+     */
+    public static function make()
+    {
+        $infra = new self();
+        $infraConfig = getenv('INFRA_CONFIG');
+        if (!$infraConfig) {
+            $infraConfig = __DIR__ . '/../example';
+        }
+        $infra->load($infraConfig);
+        $infra->validate();
+
+        return $infra;
+    }
+
     public function getInflector()
     {
         return $this->inflector;

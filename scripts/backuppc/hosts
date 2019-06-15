@@ -32,7 +32,7 @@ if (empty($hostNames)) {
     exit(0);
 }
 
-$infra = getInfra();
+$infra = Infra::make();
 
 /** @var HostResource[] $hosts */
 $hosts = $infra->getHosts(implode(', ', $hostNames));
@@ -57,17 +57,4 @@ foreach ($hosts as $host) {
     echo '#### Hosts file for ' . $host->getName() . PHP_EOL;
     echo '####' . PHP_EOL . PHP_EOL;
     echo $ssh->getOutput() . PHP_EOL;
-}
-
-function getInfra()
-{
-    $infra = new Infra();
-    $infraConfig = getenv('INFRA_CONFIG');
-    if (!$infraConfig) {
-        $infraConfig = __DIR__ . '/../../example';
-    }
-    $infra->load($infraConfig);
-    $infra->validate();
-
-    return $infra;
 }

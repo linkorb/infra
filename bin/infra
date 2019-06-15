@@ -74,13 +74,7 @@ $options = [
 
 $highlighter = new Highlighter($options);
 
-$infra = new Infra();
-$infraConfig = getenv('INFRA_CONFIG');
-if (!$infraConfig) {
-    $infraConfig = __DIR__ . '/../example';
-}
-$infra->load($infraConfig);
-$infra->validate();
+$infra = Infra::make();
 
 $application = new Application('Infra', '1.0.0');
 $application->setCatchExceptions(true);

@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
-$infra = getInfra();
+$infra = Infra::make();
 
 $fileName = $args->args['<name>'];
 
@@ -27,19 +27,6 @@ if (empty($hosts)) {
 }
 
 writeFileToHosts($fileData, $hosts, $infra);
-
-function getInfra()
-{
-    $infra = new Infra();
-    $infraConfig = getenv('INFRA_CONFIG');
-    if (!$infraConfig) {
-        $infraConfig = __DIR__ . '/../../example';
-    }
-    $infra->load($infraConfig);
-    $infra->validate();
-
-    return $infra;
-}
 
 function getFileData($fileName)
 {
