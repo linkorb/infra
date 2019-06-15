@@ -1,0 +1,7 @@
+---
+kind: BackupRule
+metadata:
+    name: config-backups-db
+spec:
+    hosts: db # all db hosts
+    path: "/etc"

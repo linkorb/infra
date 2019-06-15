@@ -42,6 +42,7 @@ class Infra
         $this->registerType(Resource\OsReleaseResource::class);
         $this->registerType(Resource\DockerEngineResource::class);
         $this->registerType(Resource\DockerAppResource::class);
+        $this->registerType(Resource\BackupRuleResource::class);
         $this->inflector = new Inflector();
 
         $this->schema = new Schema([
