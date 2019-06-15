@@ -6,3 +6,5 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
 
 $hostName = $args->args['<hostname>'];
+
+echo 'This is a command stub. Hostname is ' . $hostName . PHP_EOL;
