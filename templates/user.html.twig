@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <img class="logo-large" src="{{ record.imageUrl }}" alt="User's image"/>
+
+    <h1>User: {{ record.displayName }}
+        <small>{{ record.name }}</small>
+    </h1>
+    <dl class="dl-horizontal">
+        <dt>Userbase ID</dt>
+        <dd>{{ record.name }}</dd>
+        <dt>Email</dt>
+        <dd>{{ record.email }}</dd>
+        <dt>GitHub</dt>
+        <dd>
+            <a href="{{ record.githubLink }}" target="_blank">{{ record.githubLink }}</a>
+        </dd>
+        <dt>SSH Public Key</dt>
+        <dd><code>{{ record.sshPublicKey }}</code></dd>
+    </dl>
+
+    {% if record.hosts %}
+        <h3>Hosts: {{ record.hosts|length }}</h3>
+        <ul>
+            {% for host in record.hosts %}
+                <li>
+                    <a href="./hosts:{{ host.name }}.html">{{ host.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

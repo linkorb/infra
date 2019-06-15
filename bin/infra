@@ -1,10 +1,23 @@
 #!/usr/bin/env php
 <?php
 
+use Infra\Command\AnsibleExportInventoryCommand;
+use Infra\Command\AnsibleImportInventoryCommand;
+use Infra\Command\CustomCommand;
+use Infra\Command\FirewallImportCommand;
+use Infra\Command\FirewallInstallCommand;
+use Infra\Command\FirewallShowCommand;
+use Infra\Command\GetCommand;
+use Infra\Command\HostExecCommand;
+use Infra\Command\HostListCommand;
+use Infra\Command\QueryCommand;
+use Infra\Command\ScriptCommand;
+use Infra\Command\SensuImportChecksCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
 use CliHighlighter\Service\Highlighter;
 use Infra\Infra;
+use AutoTune\Tuner;
 
 $loader = __DIR__ . '/../vendor/autoload.php';
 
@@ -22,11 +35,11 @@ if (!file_exists($loader)) {
 
 $l = require $loader;
 
-if (class_exists('AutoTune\Tuner')) {
-    \AutoTune\Tuner::init($l);
+if (class_exists(Tuner::class)) {
+    Tuner::init($l);
 }
 
-$filename = __DIR__.'/../.env';
+$filename = __DIR__ . '/../.env';
 if (!file_exists($filename)) {
     $filename = '~/.infra';
 }
@@ -34,7 +47,6 @@ if (file_exists($filename)) {
     $dotenv = new Dotenv();
     $dotenv->load($filename);
 }
-
 
 $options = [
     'json' => [
@@ -58,7 +70,8 @@ $options = [
         'values'     => 'light_white',
         'comments'   => 'red',
     ],
-];        
+];
+
 $highlighter = new Highlighter($options);
 
 $infra = new Infra();
@@ -69,26 +82,28 @@ if (!$infraConfig) {
 $infra->load($infraConfig);
 $infra->validate();
 
-
-
 $application = new Application('Infra', '1.0.0');
 $application->setCatchExceptions(true);
-$application->add(new \Infra\Command\GetCommand($infra, $highlighter));
-$application->add(new \Infra\Command\QueryCommand($infra));
-$application->add(new \Infra\Command\ScriptCommand($infra));
-$application->add(new \Infra\Command\HostListCommand($infra));
-$application->add(new \Infra\Command\HostExecCommand($infra));
-$application->add(new \Infra\Command\FirewallShowCommand($infra));
-$application->add(new \Infra\Command\FirewallInstallCommand($infra));
-$application->add(new \Infra\Command\FirewallImportCommand($infra));
-$application->add(new \Infra\Command\AnsibleImportInventoryCommand($infra));
-$application->add(new \Infra\Command\AnsibleExportInventoryCommand($infra));
-$application->add(new \Infra\Command\SensuImportChecksCommand($infra));
+$application->add(new GetCommand($infra, $highlighter));
+$application->add(new QueryCommand($infra));
+$application->add(new ScriptCommand($infra));
+$application->add(new HostListCommand($infra));
+$application->add(new HostExecCommand($infra));
+$application->add(new FirewallShowCommand($infra));
+$application->add(new FirewallInstallCommand($infra));
+$application->add(new FirewallImportCommand($infra));
+$application->add(new AnsibleImportInventoryCommand($infra));
+$application->add(new AnsibleExportInventoryCommand($infra));
+$application->add(new SensuImportChecksCommand($infra));
 
 foreach ($infra->getScripts() as $script) {
-    $command = \Infra\Command\CustomCommand::fromScript($infra, $script);
-    $application->add($command);
+    try {
+        $command = CustomCommand::fromScript($infra, $script);
+        $application->add($command);
+    } catch (Exception $e) {
+        echo "Can't create " . $script->getName() . '. ' . $e->getMessage() . PHP_EOL;
+        exit(-1);
+    }
 }
 
 $application->run();
-

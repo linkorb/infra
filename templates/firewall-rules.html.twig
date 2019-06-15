@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <h1>
+        Firewall rules
+        <small>{{ records|length }}</small>
+    </h1>
+    <ul>
+        {% for record in records %}
+            <li>
+                <a href="./firewall-rules:{{ record.name }}.html">{{ record.name }}</a> ({{ record.hosts|length }} hosts)
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,267 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Sdk\Utils;
+use Infra\Service\HtmlGeneratorService;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Utils::getArguments(__FILE__);
+
+$generator = new HtmlGeneratorService(
+    __DIR__ . '/../../doc/html/'
+);
+
+$generator->checkDirectory();
+$generator->deleteObsoleteFiles();
+$generator->generateIndex();
+
+$hosts = getHosts();
+$generator->generateHosts($hosts);
+
+$hostGroups = getHostGroups();
+$generator->generateHostGroups($hostGroups);
+
+$osReleases = getOsReleases();
+$generator->generateOsReleases($osReleases);
+
+$firewallRules = getFirewallRules();
+$generator->generateFirewallRules($firewallRules);
+
+$repositories = getRepositories();
+$generator->generateRepositories($repositories);
+
+$users = getUsers();
+$generator->generateUsers($users);
+
+$domains = getDnsDomains();
+$generator->generateDnsDomains($domains);
+
+$monitoringChecks = getMonitoringChecks();
+$generator->generateMonitoringChecks($monitoringChecks);
+
+$dockerEngines = getDockerEngines();
+$generator->generateDockerEngines($dockerEngines);
+
+function getHosts()
+{
+    $query = <<<GRAPHQL
+query {
+    hosts: allHosts {
+        name
+        osRelease {
+            name
+            displayName
+        }
+        fqdn
+        publicIp
+        privateIp
+        memberships: hostGroups {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['hosts'];
+}
+
+function getHostGroups()
+{
+    $query = <<<GRAPHQL
+query {
+    hostGroups: allHostGroups {
+        name
+        description
+        parentHostGroup {
+            name
+        }
+        members: hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['hostGroups'];
+}
+
+function getOsReleases()
+{
+    $query = <<<GRAPHQL
+query {
+    osReleases: allOsReleases {
+        name
+        displayName
+        hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['osReleases'];
+}
+
+function getFirewallRules()
+{
+    $query = <<<GRAPHQL
+query {
+    firewallRules: allFirewallRules {
+        name
+        description
+        template
+        hosts {
+            name
+        }
+        remoteHosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['firewallRules'];
+}
+
+function getRepositories()
+{
+    $query = <<<GRAPHQL
+query {
+    repositories: allGitRepositories {
+        name
+        description
+        owner: repositoryOwnerName
+        viewUrl
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['repositories'];
+}
+
+function getUsers()
+{
+    $query = <<<GRAPHQL
+query {
+    users: allUsers {
+        name
+        githubLink
+        hasSshPublicKey
+        sshPublicKey
+        hosts {
+            name
+            publicIp
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['users'];
+}
+
+function getDnsDomains()
+{
+    $query = <<<GRAPHQL
+query {
+    domains: allDnsDomains {
+        name
+        dnsAccount
+        dnsRecords {
+            name
+            type
+            ttl
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['domains'];
+}
+
+function getMonitoringChecks()
+{
+    $query = <<<GRAPHQL
+query {
+    allMonitoringChecks {
+        name
+        command
+        interval
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['allMonitoringChecks'];
+}
+
+function getDockerEngines()
+{
+    $query = <<<GRAPHQL
+query {
+    allDockerEngines {
+        name
+        address
+        port
+        apps {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['allDockerEngines'];
+}

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>DNS Domains
+        <small>{{ records|length }}</small>
+    </h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Records</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            <tr>
+                <td>
+                    <a href="./domains:{{ record.name }}.html">{{ record.name }}</a>
+                </td>
+                <td>
+                    {{ record.dnsRecords|length }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
