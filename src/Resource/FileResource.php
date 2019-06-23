@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class FileResource extends AbstractResource
 {
@@ -22,7 +22,7 @@ class FileResource extends AbstractResource
         return $this->spec['content'] ?? null;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
             'name'   => 'File',

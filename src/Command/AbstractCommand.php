@@ -3,7 +3,6 @@
 namespace Infra\Command;
 
 use RuntimeException;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,10 +15,12 @@ use Infra\Infra;
 abstract class AbstractCommand extends Command
 {
     protected $infra;
+    protected $graph;
 
     public function __construct(Infra $infra)
     {
         $this->infra = $infra;
+        $this->graph = $infra->getGraph();
         parent::__construct();
     }
 

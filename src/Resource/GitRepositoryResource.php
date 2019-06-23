@@ -3,7 +3,8 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Resource\AbstractResource;
+use Graph\Graph;
 
 class GitRepositoryResource extends AbstractResource
 {
@@ -56,7 +57,7 @@ class GitRepositoryResource extends AbstractResource
             $parsedUrl['name'];
     }
 
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         return [
             'name'   => 'GitRepository',

@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class DockerAppResource extends AbstractResource
 {
@@ -22,10 +22,10 @@ class DockerAppResource extends AbstractResource
         return $this->getEngine() === $name;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
-            'name'   => $infra->getTypeName(self::class),
+            'name'   => $graph->getTypeName(self::class),
             'fields' => [
                 'name'        => Type::id(),
                 'description' => [

@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class CronJobResource extends AbstractResource
 {
@@ -27,7 +27,7 @@ class CronJobResource extends AbstractResource
         return $this->spec['command'] ?? null;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
             'name'   => 'CronJob',

@@ -1,22 +1,24 @@
 #!/usr/bin/env php
 <?php
 
+use Graph\Command\GetCommand;
+use Graph\Command\QueryCommand;
+use Scripter\Command\ScriptCommand;
+use Scripter\Command\RunScriptCommand;
 use Infra\Command\AnsibleExportInventoryCommand;
 use Infra\Command\AnsibleImportInventoryCommand;
-use Infra\Command\CustomCommand;
 use Infra\Command\FirewallImportCommand;
 use Infra\Command\FirewallInstallCommand;
 use Infra\Command\FirewallShowCommand;
-use Infra\Command\GetCommand;
 use Infra\Command\HostExecCommand;
 use Infra\Command\HostListCommand;
-use Infra\Command\QueryCommand;
-use Infra\Command\ScriptCommand;
 use Infra\Command\SensuImportChecksCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
 use CliHighlighter\Service\Highlighter;
+use Graph\Graph;
 use Infra\Infra;
+use Scripter\Scripter;
 use AutoTune\Tuner;
 
 $loader = __DIR__ . '/../vendor/autoload.php';
@@ -74,19 +76,32 @@ $options = [
 
 $highlighter = new Highlighter($options);
 
-$infra = new Infra();
-$infraConfig = getenv('INFRA_CONFIG');
-if (!$infraConfig) {
-    $infraConfig = __DIR__ . '/../example';
+$graph = new Graph();
+
+$infra = new Infra($graph);
+
+
+$configPath = getenv('INFRA_CONFIG');
+if (!$configPath) {
+    $configPath = __DIR__ . '/../example';
 }
-$infra->load($infraConfig);
+$loader = new \Graph\Loader\ResourceYamlLoader();
+$loader->loadPath($graph, $configPath);
 $infra->validate();
+
+
+
+$scripter = new Scripter();
+$scripter->loadScripts(__DIR__ . '/../scripts');
+$scripter->loadScripts($configPath . '/scripts');
+
+
 
 $application = new Application('Infra', '1.0.0');
 $application->setCatchExceptions(true);
-$application->add(new GetCommand($infra, $highlighter));
-$application->add(new QueryCommand($infra));
-$application->add(new ScriptCommand($infra));
+$application->add(new GetCommand($graph, $highlighter));
+$application->add(new QueryCommand($graph));
+$application->add(new ScriptCommand($scripter));
 $application->add(new HostListCommand($infra));
 $application->add(new HostExecCommand($infra));
 $application->add(new FirewallShowCommand($infra));
@@ -96,9 +111,11 @@ $application->add(new AnsibleImportInventoryCommand($infra));
 $application->add(new AnsibleExportInventoryCommand($infra));
 $application->add(new SensuImportChecksCommand($infra));
 
-foreach ($infra->getScripts() as $script) {
+
+
+foreach ($scripter->getScripts() as $script) {
     try {
-        $command = CustomCommand::fromScript($infra, $script);
+        $command = RunScriptCommand::fromScript($script);
         $application->add($command);
     } catch (Exception $e) {
         echo "Can't create " . $script->getName() . '. ' . $e->getMessage() . PHP_EOL;

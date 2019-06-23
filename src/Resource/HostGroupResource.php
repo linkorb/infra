@@ -3,13 +3,13 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class HostGroupResource extends AbstractResource
 {
     public function getHosts()
     {
-        $hosts = $this->infra->getResourcesByType('Host');
+        $hosts = $this->graph->getResourcesByType('Host');
         $res = [];
         foreach ($hosts as $host) {
             if ($host->hasHostGroupName($this->getName())) {
@@ -40,7 +40,7 @@ class HostGroupResource extends AbstractResource
     public function getChildHostGroups()
     {
         $res = [];
-        foreach ($this->infra->getResourcesByType('HostGroup') as $hostGroup) {
+        foreach ($this->graph->getResourcesByType('HostGroup') as $hostGroup) {
             $parentHostGroup = $hostGroup->getParentHostGroup();
             if ($parentHostGroup) {
                 if ($parentHostGroup->getName() == $this->getName()) {
@@ -57,15 +57,15 @@ class HostGroupResource extends AbstractResource
         if (!$name) {
             return null;
         }
-        $hostGroup = $this->infra->getResource('HostGroup', $name);
+        $hostGroup = $this->graph->getResource('HostGroup', $name);
         return $hostGroup;
     }
 
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         return [
             'name' => 'HostGroup',
-            'fields' => function() use (&$infra) {
+            'fields' => function() use (&$graph) {
                 return [
                     'name' => Type::id(),
                     'description' => [
@@ -73,11 +73,11 @@ class HostGroupResource extends AbstractResource
                         'description' => 'Description',
                     ],
                     'parentHostGroup' => [
-                        'type' => $infra->getType('HostGroup'),
+                        'type' => $graph->getType('HostGroup'),
                         'description' => 'Parent host group',
                     ],
                     'hosts' => [
-                        'type' => Type::listOf($infra->getType('Host')),
+                        'type' => Type::listOf($graph->getType('Host')),
                         'description' => 'Returns all hosts in this group',
                     ],
                 ];

@@ -12,41 +12,37 @@ use Doctrine\Common\Inflector\Inflector;
 use SSHClient\ClientConfiguration\ClientConfiguration;
 use SSHClient\ClientBuilder\ClientBuilder;
 use RuntimeException;
+use Graph\Graph;
 
 class Infra
 {
-    protected $types = [];
-    protected $typeClassMap = [];
-    protected $resources = [];
+    protected $graph;
 
-    /**
-     * @var Script[]
-     */
-    protected $scripts = [];
-    protected $schema;
-    protected $scriptPaths = [];
-
-    public function __construct()
+    public function __construct(Graph $graph)
     {
-        $this->registerType(Resource\HostResource::class);
-        $this->registerType(Resource\HostGroupResource::class);
-        $this->registerType(Resource\FirewallRuleResource::class);
-        $this->registerType(Resource\UserResource::class);
-        $this->registerType(Resource\MonitoringCheckResource::class);
-        $this->registerType(Resource\DnsDomainResource::class);
-        $this->registerType(Resource\DnsRecordResource::class);
-        $this->registerType(Resource\QueryResource::class);
-        $this->registerType(Resource\GitRepositoryResource::class);
-        $this->registerType(Resource\CronJobResource::class);
-        $this->registerType(Resource\FileResource::class);
-        $this->registerType(Resource\OsReleaseResource::class);
-        $this->registerType(Resource\DockerEngineResource::class);
-        $this->registerType(Resource\DockerAppResource::class);
-        $this->inflector = new Inflector();
+        $this->graph = $graph;
 
-        $this->schema = new Schema([
-            'query' => $this->getType('Query'),
-        ]);
+        $graph->registerType(Resource\HostResource::class);
+        $graph->registerType(Resource\HostGroupResource::class);
+        $graph->registerType(Resource\FirewallRuleResource::class);
+        $graph->registerType(Resource\UserResource::class);
+        $graph->registerType(Resource\MonitoringCheckResource::class);
+        $graph->registerType(Resource\DnsDomainResource::class);
+        $graph->registerType(Resource\DnsRecordResource::class);
+        $graph->registerType(Resource\GitRepositoryResource::class);
+        $graph->registerType(Resource\CronJobResource::class);
+        $graph->registerType(Resource\FileResource::class);
+        $graph->registerType(Resource\OsReleaseResource::class);
+        $graph->registerType(Resource\DockerEngineResource::class);
+        $graph->registerType(Resource\DockerAppResource::class);
+        $graph->registerType(Resource\QueryResource::class);
+
+        $graph->init($this);
+    }
+
+    public function getGraph()
+    {
+        return $this->graph;
     }
 
     public function getInflector()
@@ -54,200 +50,18 @@ class Infra
         return $this->inflector;
     }
 
-    public function getSchema()
-    {
-        return $this->schema;
-    }
-
-    public function registerType(string $className): void
-    {
-        $name = $this->getTypeName($className);
-        $this->typeClassMap[$name] = $className;
-    }
-
-    public function getTypeName(string $className): string
-    {
-        $name = (new \ReflectionClass($className))->getShortName();
-        $name = str_replace('Resource', '', $name);
-
-        return $name;
-    }
-
-    public function getTypeNames(): array
-    {
-        $res = [];
-        foreach ($this->typeClassMap as $key => $value) {
-            $res[] = $key;
-        }
-
-        return $res;
-    }
-
-    public function getType($name): ObjectType
-    {
-        if (!isset($this->types[$name])) {
-            if (!isset($this->typeClassMap[$name])) {
-                throw new Exception\UnknownResourceTypeException($name);
-            }
-            $className = $this->typeClassMap[$name];
-            $config = $className::getConfig($this);
-            $obj = new ObjectType($config);
-            $this->types[$name] = $obj;
-        }
-
-        return $this->types[$name];
-    }
-
-    public function hasType($name): bool
-    {
-        return isset($this->typeClassMap[$name]);
-    }
-
-    public function getTypeClass($name): string
-    {
-        if (!$this->hasType($name)) {
-            throw new Exception\UnknownResourceTypeException($name);
-        }
-
-        return $this->typeClassMap[$name];
-    }
-
-    public function getCapitals($str)
-    {
-        if (preg_match_all('#([A-Z]+)#', $str, $matches)) {
-            return implode('', $matches[1]);
-        } else {
-            return false;
-        }
-    }
-
-    public function getTypeAliases($typeName)
-    {
-        $capitals = $this->getCapitals($typeName);
-        $res = [
-            $capitals,
-            strtolower($capitals),
-            $typeName,
-            lcfirst($typeName),
-            $this->inflector->pluralize($typeName),
-            lcfirst($this->inflector->pluralize($typeName)),
-        ];
-
-        return $res;
-    }
-
-    public function getCanonicalTypeName($name)
-    {
-        foreach ($this->getTypeNames() as $typeName) {
-            $aliases = $this->getTypeAliases($typeName);
-            if (in_array($name, $aliases)) {
-                return $typeName;
-            }
-        }
-
-        return null;
-    }
-
-    public function getResourcesByType(string $typeName): array
-    {
-        return $this->resources[$typeName] ?? [];
-    }
-
-    public function getResource(string $typeName, string $name): ?ResourceInterface
-    {
-        if (!$this->hasResource($typeName, $name)) {
-            throw new Exception\UnknownResourceException("$typeName/$name");
-        }
-        $typeResources = $this->getResourcesByType($typeName);
-
-        return $typeResources[$name] ?? null;
-    }
-
-    public function hasResource(string $typeName, string $name): bool
-    {
-        $typeResources = $this->getResourcesByType($typeName);
-
-        return isset($typeResources[$name]);
-    }
-
-    public function addResource(ResourceInterface $resource): void
-    {
-        $this->resources[$resource->getTypeName()][$resource->getName()] = $resource;
-    }
-
-    // public function getResources(): 
+    // public function getSchema()
     // {
-    //     return $this->resources;
+    //     return $this->schema;
     // }
-
-    private function rglob($pattern, $flags = 0)
-    {
-        $files = glob($pattern, $flags);
-        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
-            $files = array_merge($files, $this->rglob($dir . '/' . basename($pattern), $flags));
-        }
-
-        return $files;
-    }
-
-    public function load(string $location)
-    {
-        if (!is_dir($location)) {
-            throw new RuntimeException("Location is not a directory: " . $location);
-        }
-        // === Load resources ===
-        $filenames = $this->rglob($location . '/resources/*.yaml');
-        foreach ($filenames as $filename) {
-            if (basename($filename)[0] != '_') { // allow to quickly disable a configuration by prefixing it with an underscore
-                $this->loadResourceFile($filename);
-            }
-        }
-
-        // === Load scripts ===
-
-        $this->scriptPaths = [
-            __DIR__ . '/../scripts',
-            $location . '/scripts',
-        ];
-
-        $this->scanScripts();
-
-        return true;
-
-    }
 
     public function validate()
     {
-        foreach ($this->getResourcesByType('Host') as $host) {
-            if ($this->hasResource('HostGroup', $host->getName())) {
+        foreach ($this->graph->getResourcesByType('Host') as $host) {
+            if ($this->graph->hasResource('HostGroup', $host->getName())) {
                 throw new RuntimeException("Host with same name as a HostGroup detected: " . $host->getName());
             }
         }
-    }
-
-    public function loadResourceFile(string $filename): void
-    {
-        if (!file_exists($filename)) {
-            throw new Exception\FileNotFoundException($filename);
-        }
-        $yaml = file_get_contents($filename);
-
-        $documents = explode("\n---\n", $yaml);
-
-        foreach ($documents as $yaml) {
-            if (trim($yaml, " \n\r")) {
-                $config = Yaml::parse($yaml);
-                $this->loadResourceConfig($config);
-            }
-        }
-    }
-
-    public function loadResourceConfig(array $config): void
-    {
-        $kind = $config['kind'];
-        $className = $this->getTypeClass($kind);
-        $resource = $className::fromConfig($this, $config);
-        $this->addResource($resource);
     }
 
     /**
@@ -258,13 +72,13 @@ class Infra
         if (!$name) {
             return [];
         }
-        if ($this->hasResource('HostGroup', $name)) {
-            $hostGroup = $this->getResource('HostGroup', $name);
+        if ($this->graph->hasResource('HostGroup', $name)) {
+            $hostGroup = $this->graph->getResource('HostGroup', $name);
 
             return $hostGroup->getHosts();
         }
-        if ($this->hasResource('Host', $name)) {
-            return [$this->getResource('Host', $name)];
+        if ($this->graph->hasResource('Host', $name)) {
+            return [$this->graph->getResource('Host', $name)];
         }
         throw new Exception\UnknownHostsException($name);
     }
@@ -334,41 +148,5 @@ class Infra
         unlink($tmpfile);
     }
 
-    /**
-     * @return Script[]
-     */
-    public function getScripts()
-    {
-        return $this->scripts;
-    }
-
-    public function scanScripts()
-    {
-        foreach ($this->scriptPaths as $path) {
-            $filenames = glob($path . '/{**/*,*}', GLOB_BRACE);
-            foreach ($filenames as $filename) {
-                $filename = realpath($filename);
-                if (
-                    is_executable($filename) &&
-                    is_file($filename)
-                ) {
-                    $info = pathinfo($filename);
-
-                    $name = $info['filename'];
-                    $prefix = basename($info['dirname']);;
-                    if ($prefix !== 'scripts') {
-                        $name = $prefix . ':' . $name;
-                    }
-
-                    $doc = null;
-                    if (file_exists($filename . '.md')) {
-                        $doc = file_get_contents($filename . '.md');
-                    }
-
-                    $script = new Script($name, $filename, $doc);
-                    $this->scripts[$script->getName()] = $script;
-                }
-            }
-        }
-    }
+    
 }

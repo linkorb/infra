@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 use RuntimeException;
 
 class HostResource extends AbstractResource
@@ -48,7 +48,7 @@ class HostResource extends AbstractResource
             return null;
         }
 
-        return $this->infra->getResource('OsRelease', $name);
+        return $this->graph->getResource('OsRelease', $name);
     }
 
     public function getLocalHostGroupNames(): array
@@ -85,7 +85,7 @@ class HostResource extends AbstractResource
         $groupNames = $this->getLocalHostGroupNames();
         $res = [];
         foreach ($groupNames as $groupName) {
-            $res[$groupName] = $this->infra->getResource('HostGroup', $groupName);
+            $res[$groupName] = $this->graph->getResource('HostGroup', $groupName);
         }
 
         return $res;
@@ -117,7 +117,7 @@ class HostResource extends AbstractResource
 
     public function getFirewallRules()
     {
-        $rules = $this->infra->getResourcesByType('FirewallRule');
+        $rules = $this->graph->getResourcesByType('FirewallRule');
         $res = [];
         foreach ($rules as $rule) {
             $hosts = $rule->getHosts();
@@ -136,11 +136,11 @@ class HostResource extends AbstractResource
         return $this->getOs() === $name;
     }
 
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         return [
             'name'   => 'Host',
-            'fields' => function () use (&$infra) {
+            'fields' => function () use (&$graph) {
                 return [
                     'name'            => Type::id(),
                     'os'              => [
@@ -148,7 +148,7 @@ class HostResource extends AbstractResource
                         'description' => 'Operating system code',
                     ],
                     'osRelease'       => [
-                        'type'        => $infra->getType('OsRelease'),
+                        'type'        => $graph->getType('OsRelease'),
                         'description' => 'Operating system',
                     ],
                     'publicIp'        => [
@@ -176,11 +176,11 @@ class HostResource extends AbstractResource
                         'description' => 'Fully Qualified Domain Name',
                     ],
                     'hostGroups'      => [
-                        'type'        => Type::listOf($infra->getType('HostGroup')),
+                        'type'        => Type::listOf($graph->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (recursively)',
                     ],
                     'localHostGroups' => [
-                        'type'        => Type::listOf($infra->getType('HostGroup')),
+                        'type'        => Type::listOf($graph->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (local only)',
                     ],
                 ];

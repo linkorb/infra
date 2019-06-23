@@ -3,13 +3,13 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class DnsRecordResource extends AbstractResource
 {
     public function getDnsDomain()
     {
-        return $this->infra->getResource('DnsDomain', $this->spec['dnsDomain'] ?? null);
+        return $this->graph->getResource('DnsDomain', $this->spec['dnsDomain'] ?? null);
     }
 
     public function getType()
@@ -22,14 +22,14 @@ class DnsRecordResource extends AbstractResource
         return $this->spec['ttl'] ?? null;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
             'name'   => 'DnsRecord',
             'fields' => [
                 'name'      => Type::id(),
                 'dnsDomain' => [
-                    'type'        => $infra->getType('DnsDomain'),
+                    'type'        => $graph->getType('DnsDomain'),
                     'description' => 'DNS domain',
                 ],
                 'type'      => Type::string(),

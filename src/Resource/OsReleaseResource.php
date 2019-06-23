@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class OsReleaseResource extends AbstractResource
 {
@@ -26,7 +26,7 @@ class OsReleaseResource extends AbstractResource
         return $res;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
             'name'   => 'OsRelease',
@@ -41,7 +41,7 @@ class OsReleaseResource extends AbstractResource
                     'description' => 'OS Display Name',
                 ],
                 'hosts'       => [
-                    'type'        => Type::listOf($infra->getType('Host')),
+                    'type'        => Type::listOf($graph->getType('Host')),
                     'description' => 'Returns all hosts in this group',
                 ],
             ],

@@ -5,7 +5,7 @@ namespace Infra\Resource;
 use Graphael\TypeRegistryInterface;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class FirewallRuleResource extends AbstractResource
 {
@@ -41,7 +41,7 @@ class FirewallRuleResource extends AbstractResource
         return $this->infra->getHosts($this->spec['remoteHosts'] ?? []);
     }
 
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         return [
             'name' => 'FirewallRule',
@@ -56,11 +56,11 @@ class FirewallRuleResource extends AbstractResource
                     'description' => 'iptables template',
                 ],
                 'hosts' => [
-                    'type' => Type::listOf($infra->getType('Host')),
+                    'type' => Type::listOf($graph->getType('Host')),
                     'description' => 'Returns all hosts where this firewall rule is active',
                 ],
                 'remoteHosts' => [
-                    'type' => Type::listOf($infra->getType('Host')),
+                    'type' => Type::listOf($graph->getType('Host')),
                     'description' => 'Returns all remote hosts that this firewall rule refers to',
                 ],
             ],

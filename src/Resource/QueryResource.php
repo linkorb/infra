@@ -3,74 +3,48 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class QueryResource
 {
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         $config = [
             'name'   => 'Query',
-            'fields' => function () use (&$infra) {
-                return self::getFieldConfig($infra);
+            'fields' => function () use (&$graph) {
+                $fieldConfig = $graph->getGraphQlTypeFieldConfig();
+
+                $fieldConfig['echo'] = [
+                    'type'    => Type::string(),
+                    'args'    => [
+                        'message' => Type::nonNull(Type::string()),
+                    ],
+                    'resolve' => function ($value, $args, $context, $info) {
+                        return $args['message'] . ', test';
+                    },
+                ];
+                
+                $fieldConfig = array_merge($fieldConfig, self::addGetHostsEndpoint($graph));
+
+                return $fieldConfig;
             },
         ];
 
         return $config;
     }
 
-    public static function getFieldConfig(Infra $infra)
-    {
-        $fieldConfig = [];
-        $fieldConfig['echo'] = [
-            'type'    => Type::string(),
-            'args'    => [
-                'message' => Type::nonNull(Type::string()),
-            ],
-            'resolve' => function ($value, $args, $context, $info) {
-                return $args['message'] . ', test';
-            },
-        ];
-        foreach ($infra->getTypeNames() as $typeName) {
-            $fieldConfig[lcfirst($typeName)] = [
-                'type'        => $infra->getType($typeName),
-                'description' => 'Returns ' . $typeName . ' by name',
-                'args'        => [
-                    'name' => Type::nonNull(Type::string()),
-                ],
-                'resolve'     => function ($root, $args) use ($infra, $typeName) {
-                    $resource = $infra->getResource($typeName, $args['name']);
-
-                    return $resource;
-                },
-            ];
-            $fieldConfig['all' . $infra->getInflector()->pluralize($typeName)] = [
-                'type'        => Type::listOf($infra->getType($typeName)),
-                'description' => 'Returns all ' . $infra->getInflector()->pluralize($typeName),
-                'resolve'     => function ($root, $args) use ($infra, $typeName) {
-                    $resources = $infra->getResourcesByType($typeName);
-
-                    return $resources;
-                },
-            ];
-        }
-
-        $fieldConfig = array_merge($fieldConfig, self::addGetHostsEndpoint($infra));
-
-        return $fieldConfig;
-    }
-
-    private static function addGetHostsEndpoint(Infra $infra): array
+    private static function addGetHostsEndpoint(Graph $graph): array
     {
         $res = [];
-        $typeName = $infra->getTypeName(HostResource::class);
-        $res['get' . $infra->getInflector()->pluralize($typeName)] = [
-            'type'        => Type::listOf($infra->getType($typeName)),
+        $typeName = $graph->getTypeName(HostResource::class);
+        $res['get' . $graph->getInflector()->pluralize($typeName)] = [
+            'type'        => Type::listOf($graph->getType($typeName)),
             'args'        => [
                 'names' => Type::nonNull(Type::string()),
             ],
             'description' => 'List hosts using the host expansion algorithm',
-            'resolve'     => function ($root, $args) use ($infra, $typeName) {
+            'resolve'     => function ($root, $args) use ($graph, $typeName) {
+                $infra = $graph->getContainer();
                 return $infra->getHosts($args['names']);
             },
         ];

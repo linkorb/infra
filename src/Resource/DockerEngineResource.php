@@ -3,7 +3,7 @@
 namespace Infra\Resource;
 
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class DockerEngineResource extends AbstractResource
 {
@@ -20,7 +20,7 @@ class DockerEngineResource extends AbstractResource
     public function getApps(): array
     {
         /** @var DockerAppResource[] $apps */
-        $apps = $this->infra->getResourcesByType('DockerApp');
+        $apps = $this->graph->getResourcesByType('DockerApp');
 
         $res = [];
         foreach ($apps as $app) {
@@ -32,7 +32,7 @@ class DockerEngineResource extends AbstractResource
         return $res;
     }
 
-    public static function getConfig(Infra $infra): array
+    public static function getConfig(Graph $graph): array
     {
         return [
             'name'   => 'DockerEngine',
@@ -51,7 +51,7 @@ class DockerEngineResource extends AbstractResource
                     'description' => 'Docker Engine Port',
                 ],
                 'apps'        => [
-                    'type'        => Type::listOf($infra->getType('DockerApp')),
+                    'type'        => Type::listOf($graph->getType('DockerApp')),
                     'description' => 'Docker Apps',
                 ],
             ],

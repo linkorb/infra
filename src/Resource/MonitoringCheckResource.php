@@ -5,7 +5,7 @@ namespace Infra\Resource;
 use Graphael\TypeRegistryInterface;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Infra\Infra;
+use Graph\Graph;
 
 class MonitoringCheckResource extends AbstractResource
 {
@@ -53,7 +53,7 @@ class MonitoringCheckResource extends AbstractResource
         return $this->spec['handlers'] ?? null;
     }
 
-    public static function getConfig(Infra $infra)
+    public static function getConfig(Graph $graph)
     {
         return [
             'name' => 'MonitoringCheck',
@@ -84,7 +84,7 @@ class MonitoringCheckResource extends AbstractResource
                     'description' => 'handlers',
                 ],
                 'hosts' => [
-                    'type' => Type::listOf($infra->getType('Host')),
+                    'type' => Type::listOf($graph->getType('Host')),
                     'description' => 'Returns all hosts that should subscribe to this rule',
                 ],
             ],

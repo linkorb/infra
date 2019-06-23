@@ -22,9 +22,8 @@ class AnsibleExportInventoryCommand extends AbstractCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $infra = $this->infra;
         $data = [];
-        foreach ($infra->getResourcesByType('HostGroup') as $hostGroup) {
+        foreach ($this->graph->getResourcesByType('HostGroup') as $hostGroup) {
             $data[$hostGroup->getName()] = [
                 'hosts' => [],
             ];
@@ -45,7 +44,7 @@ class AnsibleExportInventoryCommand extends AbstractCommand
             }
         }
         $hostvars = [];
-        foreach ($infra->getResourcesByType('Host') as $host) {
+        foreach ($this->graph->getResourcesByType('Host') as $host) {
             $vars = $host->getSpec()['vars'] ?? [];
             $vars = array_merge_recursive($vars, [
                 'public_ip' => $host->getPublicIp(),
