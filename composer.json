@@ -2,7 +2,7 @@
     "name": "linkorb/infra",
     "description": "Infra: powertools for managing your infrastructure",
     "homepage": "http://www.github.com/linkorb/infra",
-    "keywords": ["php", "firwall", "infra", "iptables", "linkorb"],
+    "keywords": ["php", "firewall", "infra", "iptables", "linkorb"],
     "type": "library",
     "authors": [
         {
@@ -40,7 +40,7 @@
         }
     },
     "bin": [
-        "bin/firaga"
+        "bin/infra"
     ],
     "license": "MIT"
 }
