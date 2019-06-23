@@ -19,6 +19,7 @@ class Infra
     protected $graph;
 
     public function __construct(Graph $graph)
+
     {
         $this->graph = $graph;
 
@@ -36,6 +37,7 @@ class Infra
         $graph->registerType(Resource\DockerEngineResource::class);
         $graph->registerType(Resource\DockerAppResource::class);
         $graph->registerType(Resource\QueryResource::class);
+        $graph->registerType(Resource\BackupRuleResource::class);
 
         $graph->init($this);
     }

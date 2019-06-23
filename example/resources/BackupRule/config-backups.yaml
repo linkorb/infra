@@ -1,0 +1,7 @@
+---
+kind: BackupRule
+metadata:
+    name: config-backups
+spec:
+    hosts: prod # all production hosts
+    path: "/etc"

@@ -1,0 +1,60 @@
+#!/usr/bin/env php
+<?php
+
+use Infra\Infra;
+use Infra\Resource\HostResource;
+use Infra\Sdk\Utils;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+$query = <<<GRAPHQL
+query {
+    allBackupRules {
+        name,
+        hosts
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+$hostNames = [];
+
+foreach ($data['data']['allBackupRules'] as $rule) {
+    $hostNames[] = $rule['hosts'];
+}
+
+if (empty($hostNames)) {
+    echo 'There is no any rules.' . PHP_EOL;
+
+    exit(0);
+}
+
+$infra = Infra::make();
+
+/** @var HostResource[] $hosts */
+$hosts = $infra->getHosts(implode(', ', $hostNames));
+
+if (empty($hosts)) {
+    echo 'There is no any hosts.' . PHP_EOL;
+
+    exit(0);
+}
+
+foreach ($hosts as $host) {
+    $sshBuilder = $infra->getSshBuilder($host);
+    $ssh = $sshBuilder->buildClient();
+
+    $ssh->exec(['cat /etc/hosts']);
+
+    if ($ssh->getExitCode() !== 0) {
+        throw new RuntimeException($ssh->getErrorOutput());
+    }
+
+    echo '####' . PHP_EOL;
+    echo '#### Hosts file for ' . $host->getName() . PHP_EOL;
+    echo '####' . PHP_EOL . PHP_EOL;
+    echo $ssh->getOutput() . PHP_EOL;
+}
