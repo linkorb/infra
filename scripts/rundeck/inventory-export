@@ -41,6 +41,10 @@ foreach ($data['data']['allHosts'] as $host) {
             continue;
         }
 
+        if (!$value) {
+            continue;
+        }
+
         if (!array_key_exists($key, getRundeckNodeAttributes())) {
             continue;
         }
@@ -51,6 +55,7 @@ foreach ($data['data']['allHosts'] as $host) {
     $nodes['node'][] = $nodeData;
 }
 
+// print_r($nodes); exit();
 $result = (new XmlEncoder())->encode($nodes, XmlEncoder::FORMAT, [
     XmlEncoder::ROOT_NODE_NAME => 'project',
     XmlEncoder::STANDALONE     => false,
