@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Infra\Sdk\Utils;
+
+$args = Docopt::handle(file_get_contents(__FILE__ . '.md'));
+
+
+// Create the GraphQL query
+$query = <<<GRAPHQL
+query {
+    allMonitoringChecks {
+        name
+        command
+        interval
+        occurrences
+        subscribers
+        handlers
+    }
+}
+GRAPHQL;
+
+$data = Utils::query($query);
+
+$hostnames = array();
+$labels = array('job' => 'websites-reachable');
+
+foreach ($data['data']['allMonitoringChecks']  as $item) {
+    array_push($hostnames, $item['name'] . ':9100');
+}
+$checks = ['targets' => $hostnames, 'labels' => $labels];
+echo json_encode(array($checks), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) . PHP_EOL;
+
