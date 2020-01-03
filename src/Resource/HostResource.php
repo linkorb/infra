@@ -183,6 +183,10 @@ class HostResource extends AbstractResource
                         'type'        => Type::listOf($graph->getType('HostGroup')),
                         'description' => 'Returns all hostgroups (local only)',
                     ],
+                    'labels' => [
+                        'type'        => Type::listOf($graph->getType('Label')),
+                        'description' => 'Returns all labels',
+                    ],
                 ];
             },
         ];

@@ -23,6 +23,7 @@ class Infra
     {
         $this->graph = $graph;
 
+        $graph->registerType(Resource\LabelResource::class);
         $graph->registerType(Resource\HostResource::class);
         $graph->registerType(Resource\HostGroupResource::class);
         $graph->registerType(Resource\FirewallRuleResource::class);
