@@ -41,12 +41,9 @@ if (class_exists(Tuner::class)) {
     Tuner::init($l);
 }
 
-$filename = __DIR__ . '/../.env';
-if (!file_exists($filename)) {
-    $filename = '~/.infra';
-}
+$filename = getcwd() . '/.env';
 if (file_exists($filename)) {
-    $dotenv = new Dotenv();
+    $dotenv = new Dotenv(true);
     $dotenv->load($filename);
 }
 
