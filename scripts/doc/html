@@ -5,8 +5,11 @@ use Infra\Sdk\Utils;
 use Infra\Service\HtmlGeneratorService;
 
 $baseDir = __DIR__ . '/../../';
-if (!file_exists($baseDir . 'composer.json')) {
-  $baseDir = __DIR__ . '/../../../../../'; // run as a composer dependency
+if (!file_exists($baseDir . 'vendor/autoload.php')) {
+    $baseDir = __DIR__ . '/../../../../../'; // run as a composer dependency
+}
+if (!file_exists($baseDir . 'vendor/autoload.php')) {
+    throw new RuntimeException("Error resolving base directory");
 }
 require_once $baseDir . 'vendor/autoload.php';
 
