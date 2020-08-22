@@ -4,50 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2dc18817ee24272741e7de34d643c3cf",
+    "content-hash": "b812d0ad91c45b8a76fba85e7096bbbd",
     "packages": [
-        {
-            "name": "badcow/dns",
-            "version": "v2.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Badcow/DNS.git",
-                "reference": "f849b0ab6dc2d6048f4354540e8c1ccece4636b6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Badcow/DNS/zipball/f849b0ab6dc2d6048f4354540e8c1ccece4636b6",
-                "reference": "f849b0ab6dc2d6048f4354540e8c1ccece4636b6",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~7.1",
-                "rlanvin/php-ip": "~1.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "~2.1",
-                "phpstan/phpstan": "^0.11.6",
-                "phpunit/phpunit": "~7.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Badcow\\DNS\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Williams",
-                    "email": "sam@badcow.co"
-                }
-            ],
-            "description": "A PHP library for creating DNS zone files based on RFC1035",
-            "time": "2019-10-09T11:09:20+00:00"
-        },
         {
             "name": "clue/stream-filter",
             "version": "v1.4.1",
@@ -524,54 +482,6 @@
             "time": "2019-07-01T23:21:34+00:00"
         },
         {
-            "name": "hiddeco/transip",
-            "version": "v5.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hiddeco/transip.git",
-                "reference": "4f903f68ec22231c0ae2d762d76a8fbd8a6cd15b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hiddeco/transip/zipball/4f903f68ec22231c0ae2d762d76a8fbd8a6cd15b",
-                "reference": "4f903f68ec22231c0ae2d762d76a8fbd8a6cd15b",
-                "shasum": ""
-            },
-            "require": {
-                "ext-soap": "*",
-                "php": ">=5.6"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "5.7.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TransIP\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Hidde Beydals",
-                    "email": "hello@hidde.co",
-                    "homepage": "https://github.com/hiddeco"
-                }
-            ],
-            "description": "The better TransIP API client.",
-            "keywords": [
-                "api",
-                "php",
-                "soap",
-                "transip"
-            ],
-            "time": "2018-06-28T19:28:59+00:00"
-        },
-        {
             "name": "knplabs/github-api",
             "version": "v2.15.0",
             "source": {
@@ -645,54 +555,6 @@
                 }
             ],
             "time": "2020-07-11T16:45:45+00:00"
-        },
-        {
-            "name": "linkorb/dnsx",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/linkorb/dnsx.git",
-                "reference": "eff1c4cf0de6d474a3c1d9619945d115e11f739d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/linkorb/dnsx/zipball/eff1c4cf0de6d474a3c1d9619945d115e11f739d",
-                "reference": "eff1c4cf0de6d474a3c1d9619945d115e11f739d",
-                "shasum": ""
-            },
-            "require": {
-                "hiddeco/transip": "~5.4"
-            },
-            "require-dev": {
-                "symfony/console": "^4.0",
-                "symfony/dotenv": "^4.0"
-            },
-            "type": "application",
-            "autoload": {
-                "psr-4": {
-                    "DnsX\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "LinkORB",
-                    "email": "engineering@linkorb.com",
-                    "role": "Development"
-                }
-            ],
-            "description": "Provider independent DNS updater",
-            "homepage": "https://github.com/linkorb/dnsx",
-            "keywords": [
-                "dns",
-                "domain",
-                "linkorb",
-                "transip"
-            ],
-            "time": "2019-03-18T13:35:32+00:00"
         },
         {
             "name": "linkorb/graph",
@@ -1541,43 +1403,6 @@
             ],
             "description": "A polyfill for getallheaders.",
             "time": "2019-03-08T08:55:37+00:00"
-        },
-        {
-            "name": "rlanvin/php-ip",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rlanvin/php-ip.git",
-                "reference": "03e507114b95e2d3a9b9621dc6fb583401afbf5e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rlanvin/php-ip/zipball/03e507114b95e2d3a9b9621dc6fb583401afbf5e",
-                "reference": "03e507114b95e2d3a9b9621dc6fb583401afbf5e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-gmp": "*",
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "IPv4/IPv6 manipulation library for PHP",
-            "homepage": "https://github.com/rlanvin/php-ip",
-            "keywords": [
-                "IP",
-                "ipv4",
-                "ipv6"
-            ],
-            "time": "2015-06-26T06:50:37+00:00"
         },
         {
             "name": "ssh-client/ssh-client",
