@@ -64,6 +64,16 @@ class HtmlGeneratorService
             )
         );
 
+        file_put_contents(
+            $this->pathOutput . '/hosts.csv',
+            $this->twig->render(
+                'hosts.csv.twig',
+                [
+                    'resources' => $resources,
+                ]
+            )
+        );
+
         foreach ($resources as $resource) {
             file_put_contents(
                 $this->pathOutput . '/hosts:' . $resource['name'] . '.html',

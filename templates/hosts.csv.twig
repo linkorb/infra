@@ -1,0 +1,6 @@
+name;os;publicIp;privateIp;status;services;labels;
+{% for resource in resources %}
+{{ resource.name }};{{ resource.osRelease.name }};{{ resource.publicIp }};{{ resource.privateIp }};{{ resource.status }};{% for service in resource.services %}{{ service.name}} {% endfor %};{% for label in resource.labels %}
+{{ label.key}}:{{ label.value}} {% endfor %};
+{% endfor %}
+
