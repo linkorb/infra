@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Service: {{ resource.name }}
+    </h1>
+    <dl class="dl-horizontal">
+        <dt>Description</dt>
+        <dd>{{ resource.description }}</dd>
+    </dl>
+
+    {% include "chunk-labels.html.twig" %}
+
+    {% if resource.hosts %}
+        <h3>Hosts: {{ resource.hosts|length }}</h3>
+        <ul>
+            {% for host in resource.hosts %}
+                <li>
+                    <a href="./hosts:{{ host.name }}.html">{{ host.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

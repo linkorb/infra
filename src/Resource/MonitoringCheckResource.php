@@ -22,7 +22,7 @@ class MonitoringCheckResource extends AbstractResource
         }
         return $hosts;
     }
-    
+
     public function getCommand()
     {
         return $this->spec['command'] ?? null;
@@ -62,6 +62,10 @@ class MonitoringCheckResource extends AbstractResource
                 'description' => [
                     'type' => Type::string(),
                     'description' => 'Description',
+                ],
+                'labels' => [
+                    'type'        => Type::listOf($graph->getType('Label')),
+                    'description' => 'Returns all labels',
                 ],
                 'command' => [
                     'type' => Type::string(),

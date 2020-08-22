@@ -13,6 +13,8 @@
         <dd>{{ record.port }}</dd>
     </dl>
 
+    {% include "chunk-labels.html.twig" %}
+
     {% if record.apps %}
         <h3>Docker Apps: {{ record.apps|length }}</h3>
         <ul>

@@ -36,6 +36,10 @@ class DnsDomainResource extends AbstractResource
             'fields' => function () use (&$graph) {
                 return [
                     'name'       => Type::id(),
+                    'labels' => [
+                        'type'        => Type::listOf($graph->getType('Label')),
+                        'description' => 'Returns all labels',
+                    ],
                     'dnsAccount' => [
                         'type'        => Type::string(),
                         'description' => 'DNS account',

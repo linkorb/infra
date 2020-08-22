@@ -1,40 +1,54 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Hosts
-        <small>{{ hosts|length }}</small>
+    <h1>resources
+        <small>{{ resources|length }}</small>
     </h1>
     <table class="data-table">
         <thead>
         <tr>
             <th>Name</th>
-            <th>Provider</th>
+            {# <th>Provider</th> #}
             <th>OS</th>
             <th>Public IP</th>
             <th>Private IP</th>
             <th>Status</th>
+            <th>Services</th>
+            <th>Labels</th>
         </tr>
         </thead>
         <tbody>
-        {% for host in hosts %}
+        {% for resource in resources %}
             <tr>
                 <td>
-                    <a href="./hosts:{{ host.name }}.html">{{ host.name }}</a>
+                    <a href="./hosts:{{ resource.name }}.html">{{ resource.name }}</a>
+                </td>
+                {#
+                <td>
+                    {{ resource.provider.displayName }}
+                </td>
+                #}
+                <td>
+                    {{ resource.osRelease.displayName }} ({{ resource.osRelease.name }})
                 </td>
                 <td>
-                    {{ host.provider.displayName }}
+                    {{ resource.publicIp }}
                 </td>
                 <td>
-                    {{ host.osRelease.displayName }}
+                    {{ resource.privateIp }}
                 </td>
                 <td>
-                    {{ host.publicIp }}
+                    {{ resource.status }}
                 </td>
                 <td>
-                    {{ host.privateIp }}
+                  {% for service in resource.services %}
+                    <a href="./services:{{ service.name }}.html">{{ service.name}}</a>
+                  {% endfor %}
                 </td>
                 <td>
-                    {{ host.status }}
+                  {% for label in resource.labels %}
+                    <span class="badge badge-info">{{ label.key}}: {{ label.value}}</span>
+                  {% endfor %}
                 </td>
             </tr>
         {% endfor %}

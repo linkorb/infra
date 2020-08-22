@@ -3,6 +3,10 @@ kind: Host
 metadata:
   name: docker-engine-host1
   description: Docker Engine One
+  labels:
+    provider: google-cloud
+    costPrice: $75
+    costFrequency: monthly
 spec:
   os: xenial
   publicIp: 192.168.1.2

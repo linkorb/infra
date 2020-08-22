@@ -2,7 +2,7 @@
 
 {% block body %}
     <h1>Host groups
-        <small>{{ records|length }}</small>
+        <small>{{ resources|length }}</small>
     </h1>
     <table class="data-table">
         <thead>
@@ -13,16 +13,16 @@
         </tr>
         </thead>
         <tbody>
-        {% for record in records %}
+        {% for resource in resources %}
             <tr>
                 <td>
-                    <a href="./host-groups:{{ record.name }}.html">{{ record.name }}</a><br/>
-                    <i class="text-muted">{{ record.description }}</i>
+                    <a href="./host-groups:{{ resource.name }}.html">{{ resource.name }}</a><br/>
+                    <i class="text-muted">{{ resource.description }}</i>
                 </td>
                 <td>
-                    {{ record.members|length }}
+                    {{ resource.members|length }}
                 </td>
-                <td>{{ record.type }}</td>
+                <td>{{ resource.type }}</td>
             </tr>
         {% endfor %}
         </tbody>

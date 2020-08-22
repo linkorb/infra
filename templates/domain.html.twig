@@ -11,6 +11,8 @@
         <dd>{{ record.dnsAccount }}</dd>
     </dl>
 
+    {% include "chunk-labels.html.twig" %}
+
     {% if record.dnsRecords %}
         <h3>DNS Records: {{ record.dnsRecords|length }}</h3>
         <ul>

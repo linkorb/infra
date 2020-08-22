@@ -8,7 +8,7 @@
         <small>{{ record.name }}</small>
     </h1>
     <dl class="dl-horizontal">
-        <dt>Userbase ID</dt>
+        <dt>Username</dt>
         <dd>{{ record.name }}</dd>
         <dt>Email</dt>
         <dd>{{ record.email }}</dd>
@@ -19,6 +19,8 @@
         <dt>SSH Public Key</dt>
         <dd><code>{{ record.sshPublicKey }}</code></dd>
     </dl>
+
+    {% include "chunk-labels.html.twig" %}
 
     {% if record.hosts %}
         <h3>Hosts: {{ record.hosts|length }}</h3>

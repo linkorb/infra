@@ -52,50 +52,50 @@ class HtmlGeneratorService
         );
     }
 
-    public function generateHosts($hosts): void
+    public function generateHosts($resources): void
     {
         file_put_contents(
             $this->pathOutput . '/hosts.html',
             $this->twig->render(
                 'hosts.html.twig',
                 [
-                    'hosts' => $hosts,
+                    'resources' => $resources,
                 ]
             )
         );
 
-        foreach ($hosts as $host) {
+        foreach ($resources as $resource) {
             file_put_contents(
-                $this->pathOutput . '/hosts:' . $host['name'] . '.html',
+                $this->pathOutput . '/hosts:' . $resource['name'] . '.html',
                 $this->twig->render(
                     'host.html.twig',
                     [
-                        'host' => $host,
+                        'resource' => $resource,
                     ]
                 )
             );
         }
     }
 
-    public function generateHostGroups($hostGroups): void
+    public function generateHostGroups($resources): void
     {
         file_put_contents(
             $this->pathOutput . '/host-groups.html',
             $this->twig->render(
                 'host-groups.html.twig',
                 [
-                    'records' => $hostGroups,
+                    'resources' => $resources,
                 ]
             )
         );
 
-        foreach ($hostGroups as $group) {
+        foreach ($resources as $resource) {
             file_put_contents(
-                $this->pathOutput . '/host-groups:' . $group['name'] . '.html',
+                $this->pathOutput . '/host-groups:' . $resource['name'] . '.html',
                 $this->twig->render(
                     'host-group.html.twig',
                     [
-                        'record' => $group,
+                        'resource' => $resource,
                     ]
                 )
             );
@@ -152,25 +152,25 @@ class HtmlGeneratorService
         }
     }
 
-    public function generateRepositories($repositories): void
+    public function generateRepositories($resources): void
     {
         file_put_contents(
             $this->pathOutput . '/repositories.html',
             $this->twig->render(
                 'repositories.html.twig',
                 [
-                    'records' => $repositories,
+                    'resources' => $resources,
                 ]
             )
         );
 
-        foreach ($repositories as $repository) {
+        foreach ($resources as $resource) {
             file_put_contents(
-                $this->pathOutput . '/repositories:' . $repository['owner'] . ':' . $repository['name'] . '.html',
+                $this->pathOutput . '/repositories:' . $resource['name'] . '.html',
                 $this->twig->render(
                     'repository.html.twig',
                     [
-                        'record' => $repository,
+                        'resource' => $resource,
                     ]
                 )
             );
@@ -271,6 +271,31 @@ class HtmlGeneratorService
                     'docker-engine.html.twig',
                     [
                         'record' => $dockerEngine,
+                    ]
+                )
+            );
+        }
+    }
+
+    public function generateServices(array $resources): void
+    {
+        file_put_contents(
+            $this->pathOutput . '/services.html',
+            $this->twig->render(
+                'services.html.twig',
+                [
+                    'resources' => $resources,
+                ]
+            )
+        );
+
+        foreach ($resources as $resource) {
+            file_put_contents(
+                $this->pathOutput . '/services:' . $resource['name'] . '.html',
+                $this->twig->render(
+                    'service.html.twig',
+                    [
+                        'resource' => $resource,
                     ]
                 )
             );

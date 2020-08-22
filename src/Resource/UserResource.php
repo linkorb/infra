@@ -47,6 +47,10 @@ class UserResource extends AbstractResource
                         'type'        => Type::string(),
                         'description' => 'Description',
                     ],
+                    'labels' => [
+                        'type'        => Type::listOf($graph->getType('Label')),
+                        'description' => 'Returns all labels',
+                    ],
                     'githubUsername'  => [
                         'type'        => Type::string(),
                         'description' => 'Github Username',

@@ -1,0 +1,10 @@
+---
+kind: Service
+metadata:
+  name: mysql1
+  description: Main mysql service
+  labels:
+    environment: staging
+spec:
+  hosts: db1m, db1s
+  # hostGroups: prod-west, app

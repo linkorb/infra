@@ -1,0 +1,8 @@
+<h3>Labels:</h3>
+<ul>
+    {% for label in resource.labels %}
+        <li>
+            {{ label.key }}: {{ label.value }}
+        </li>
+    {% endfor %}
+</ul>

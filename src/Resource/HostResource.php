@@ -25,6 +25,11 @@ class HostResource extends AbstractResource
         return $this->spec['privateIp'] ?? null;
     }
 
+    public function getStatus()
+    {
+        return $this->spec['status'] ?? null;
+    }
+
     public function getSshAddress()
     {
         return $this->getPublicIp();
@@ -91,6 +96,23 @@ class HostResource extends AbstractResource
         return $res;
     }
 
+
+    public function getServices()
+    {
+        $services = $this->graph->getResourcesByType('Service');
+
+        $res = [];
+        foreach ($services as $service) {
+            foreach ($service->getHosts() as $host) {
+                if ($host->getName()  == $this->getName()) {
+                    $res[$service->getName()] = $service;
+                }
+            }
+        }
+
+        return $res;
+    }
+
     public function getHostGroups()
     {
         $hostGroups = $this->getLocalHostGroups();
@@ -151,6 +173,10 @@ class HostResource extends AbstractResource
                         'type'        => $graph->getType('OsRelease'),
                         'description' => 'Operating system',
                     ],
+                    'status'       => [
+                        'type'        => Type::string(),
+                        'description' => 'Status',
+                    ],
                     'publicIp'        => [
                         'type'        => Type::string(),
                         'description' => 'Public IPv4 address',
@@ -174,6 +200,10 @@ class HostResource extends AbstractResource
                     'fqdn'            => [
                         'type'        => Type::string(),
                         'description' => 'Fully Qualified Domain Name',
+                    ],
+                    'services'      => [
+                        'type'        => Type::listOf($graph->getType('Service')),
+                        'description' => 'Returns all services on this host',
                     ],
                     'hostGroups'      => [
                         'type'        => Type::listOf($graph->getType('HostGroup')),

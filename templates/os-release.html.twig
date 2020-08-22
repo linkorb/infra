@@ -6,6 +6,8 @@
         <small>{{ osRelease.name }}</small>
     </h1>
 
+    {% include "chunk-labels.html.twig" %}
+
     <h3>Hosts: {{ osRelease.hosts|length }}</h3>
     <ul>
         {% for host in osRelease.hosts %}

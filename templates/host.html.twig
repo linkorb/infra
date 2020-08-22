@@ -1,29 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Host: {{ host.name }}</h1>
+    <h1>Host: {{ resource.name }}</h1>
     <dl class="dl-horizontal">
         <dt>Name</dt>
-        <dd>{{ host.name }}</dd>
+        <dd>{{ resource.name }}</dd>
+        <dt>Status</dt>
+        <dd>{{ resource.status }}</dd>
         <dt>Public IP</dt>
-        <dd>{{ host.publicIp }}</dd>
+        <dd>{{ resource.publicIp }}</dd>
         <dt>Private IP</dt>
-        <dd>{{ host.privateIp|default('-') }}</dd>
+        <dd>{{ resource.privateIp|default('-') }}</dd>
         <dt>OS</dt>
         <dd>
-            <a href="./os-releases:{{ host.osRelease.name }}.html">{{ host.osRelease.displayName }}</a>
+            <a href="./os-releases:{{ resource.osRelease.name }}.html">{{ resource.osRelease.displayName }}</a>
         </dd>
         <dt>Provider</dt>
         <dd>
-            <a href="./providers:{{ host.provider.name }}.html">{{ host.provider.displayName }}</a>
+            <a href="./providers:{{ resource.provider.name }}.html">{{ resource.provider.displayName }}</a>
         </dd>
     </dl>
 
+    {% include "chunk-labels.html.twig" %}
+
     <h3>Host group memberships:</h3>
     <ul>
-        {% for membership in host.memberships %}
+        {% for membership in resource.memberships %}
             <li>
                 <a href="./host-groups:{{ membership.name }}.html">{{ membership.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Services</h3>
+    <ul>
+        {% for service in resource.services %}
+            <li>
+                <a href="./services:{{ service.name }}.html">{{ service.name }}</a>
             </li>
         {% endfor %}
     </ul>

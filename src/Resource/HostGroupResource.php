@@ -72,6 +72,10 @@ class HostGroupResource extends AbstractResource
                         'type' => Type::string(),
                         'description' => 'Description',
                     ],
+                    'labels' => [
+                        'type'        => Type::listOf($graph->getType('Label')),
+                        'description' => 'Returns all labels',
+                    ],
                     'parentHostGroup' => [
                         'type' => $graph->getType('HostGroup'),
                         'description' => 'Parent host group',

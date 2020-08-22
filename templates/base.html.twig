@@ -58,7 +58,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <div class="container">
+    <div class="container-fluid">
         <a href="./index.html" class="navbar-brand">INFRA DOC</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar2">
             <span class="navbar-toggler-icon"></span>
@@ -70,57 +70,64 @@
         </div>
     </div>
 </nav>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-3 bg-light" id="sidebar">
+        <div class="col-md-2 bg-light" id="sidebar">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="./index.html">Home</a></li>
+                    <a class="nav-link" href="./index.html">Home</a>
+                </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./cards.html">Cards</a></li>
+                    <a class="nav-link" {#href="./wiki.html"#}>Wiki</a>
+                </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./wiki.html">Wiki</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./hosts.html">Hosts</a></li>
+                    <a class="nav-link" href="./hosts.html">Hosts</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./host-groups.html">Host Groups</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./os-releases.html">Operating systems</a>
+                  <a class="nav-link" href="./repositories.html">Repositories</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./firewall-rules.html">Firewall rules</a>
+                  <a class="nav-link" href="./services.html">Services</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./providers.html">Providers</a>
+                  <a class="nav-link" {#href="./cards.html" #}>Cards</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./repositories.html">Repositories</a>
+                  <a class="nav-link" href="./os-releases.html">Operating systems</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./users.html">Users</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./deployments.html">Deployments</a>
+                  <a class="nav-link" href="./firewall-rules.html">Firewall rules</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./databases.html">Databases</a>
+                  <a class="nav-link" {#href="./providers.html"#}>Providers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./database-servers.html">Database Servers</a>
+                  <a class="nav-link" href="./users.html">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./domains.html">Domains</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./monitoring-checks.html">Monitoring checks</a>
+                  <a class="nav-link" {# href="./databases.html"#}>Databases</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./backups.html">Backups</a></li>
+                  <a class="nav-link" {#href="./database-servers.html"#}>Database Servers</a>
+                </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./docker-engines.html">Docker engines</a>
+                  <a class="nav-link" href="./domains.html">Domains</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./monitoring-checks.html">Monitoring checks</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" {#href="./backups.html"#}>Backups</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./docker-engines.html">Docker engines</a>
                 </li>
             </ul>
         </div>
-        <div class="col-md-9 content" id="content">
+        <div class="col-md-10 content" id="content">
             <div class="screen-help-toggle">
                 <a href="#" onclick="$('.screen-help').toggle()">
                     <i class="fa fa-question"></i>

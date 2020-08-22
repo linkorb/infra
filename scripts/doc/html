@@ -16,32 +16,46 @@ $generator->checkDirectory();
 $generator->deleteObsoleteFiles();
 $generator->generateIndex();
 
+echo "Hosts\n";
 $hosts = getHosts();
 $generator->generateHosts($hosts);
 
+echo "HostGroups\n";
 $hostGroups = getHostGroups();
 $generator->generateHostGroups($hostGroups);
 
+echo "Services\n";
+$services = getServices();
+$generator->generateServices($services);
+
+echo "OsReleases\n";
 $osReleases = getOsReleases();
 $generator->generateOsReleases($osReleases);
 
+echo "FirewallRules\n";
 $firewallRules = getFirewallRules();
 $generator->generateFirewallRules($firewallRules);
 
+echo "Repositories\n";
 $repositories = getRepositories();
 $generator->generateRepositories($repositories);
 
+echo "Users\n";
 $users = getUsers();
 $generator->generateUsers($users);
 
+echo "DnsDomains\n";
 $domains = getDnsDomains();
 $generator->generateDnsDomains($domains);
 
+echo "MonitoringChecks\n";
 $monitoringChecks = getMonitoringChecks();
 $generator->generateMonitoringChecks($monitoringChecks);
 
+echo "DockerEngines\n";
 $dockerEngines = getDockerEngines();
 $generator->generateDockerEngines($dockerEngines);
+
 
 function getHosts()
 {
@@ -49,6 +63,10 @@ function getHosts()
 query {
     hosts: allHosts {
         name
+        labels {
+          key
+          value
+        }
         osRelease {
             name
             displayName
@@ -56,9 +74,13 @@ query {
         fqdn
         publicIp
         privateIp
+        status
         memberships: hostGroups {
             name
         }
+        services {
+          name
+      }
     }
 }
 GRAPHQL;
@@ -79,6 +101,10 @@ query {
     hostGroups: allHostGroups {
         name
         description
+        labels {
+          key
+          value
+        }
         parentHostGroup {
             name
         }
@@ -90,7 +116,6 @@ query {
 GRAPHQL;
 
     $data = Utils::query($query);
-
     if (!empty($data['errors'][0])) {
         throw new RuntimeException($data['errors'][0]['message']);
     }
@@ -105,6 +130,10 @@ query {
     osReleases: allOsReleases {
         name
         displayName
+        labels {
+          key
+          value
+        }
         hosts {
             name
         }
@@ -155,6 +184,10 @@ query {
     repositories: allGitRepositories {
         name
         description
+        labels {
+          key
+          value
+        }
         owner: repositoryOwnerName
         viewUrl
     }
@@ -179,6 +212,10 @@ query {
         githubLink
         hasSshPublicKey
         sshPublicKey
+        labels {
+          key
+          value
+        }
         hosts {
             name
             publicIp
@@ -202,6 +239,10 @@ function getDnsDomains()
 query {
     domains: allDnsDomains {
         name
+        labels {
+          key
+          value
+        }
         dnsAccount
         dnsRecords {
             name
@@ -227,6 +268,10 @@ function getMonitoringChecks()
 query {
     allMonitoringChecks {
         name
+        labels {
+          key
+          value
+        }
         command
         interval
     }
@@ -250,6 +295,10 @@ query {
         name
         address
         port
+        labels {
+          key
+          value
+        }
         apps {
             name
         }
@@ -264,4 +313,32 @@ GRAPHQL;
     }
 
     return $data['data']['allDockerEngines'];
+}
+
+
+function getServices()
+{
+    $query = <<<GRAPHQL
+query {
+    allServices {
+        name
+        description
+        labels {
+          key
+          value
+        }
+        hosts {
+            name
+        }
+    }
+}
+GRAPHQL;
+
+    $data = Utils::query($query);
+
+    if (!empty($data['errors'][0])) {
+        throw new RuntimeException($data['errors'][0]['message']);
+    }
+
+    return $data['data']['allServices'];
 }

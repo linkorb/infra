@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Repositories
+    <h1>Services
         <small>{{ resources|length }}</small>
     </h1>
     <table class="data-table">
         <thead>
         <tr>
             <th>Name</th>
+            <th>Host</th>
             <th>Labels</th>
         </tr>
         </thead>
@@ -15,10 +16,13 @@
         {% for resource in resources %}
             <tr>
                 <td>
-                    <i class="fa fa-github"></i>
-                    <!-- <span class="text-muted">{{ resource.owner }}</span>/ -->
-                    <a href="./repositories:{{ resource.name }}.html">{{ resource.name }}</a><br/>
-                    <i>{{ resource.description }}</i>
+                    <a href="./services:{{ resource.name }}.html">{{ resource.name }}</a><br />
+                    <i class="text-muted">{{ resource.description }}</i>
+                </td>
+                <td>
+                  {% for host in resource.hosts %}
+                    {{ host.name }}
+                  {% endfor %}
                 </td>
                 <td>
                   {% for label in resource.labels %}

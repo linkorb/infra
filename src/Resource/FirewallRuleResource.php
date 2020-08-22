@@ -51,6 +51,10 @@ class FirewallRuleResource extends AbstractResource
                     'type' => Type::string(),
                     'description' => 'Description',
                 ],
+                'labels' => [
+                    'type'        => Type::listOf($graph->getType('Label')),
+                    'description' => 'Returns all labels',
+                ],
                 'template' => [
                     'type' => Type::string(),
                     'description' => 'iptables template',

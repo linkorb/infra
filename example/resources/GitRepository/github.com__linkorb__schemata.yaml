@@ -1,7 +1,10 @@
 ---
 kind: GitRepository
 metadata:
-    name: github.com__linkorb__schemata
-    description: 'Schemata: database schema powertools'
+  name: github.com__linkorb__schemata
+  description: 'Schemata: database schema powertools'
+  labels:
+    "infra.linkorb.com/code/license": "MIT"
+    "infra.linkorb.com/code/language": "php"
 spec:
-    url: 'git@github.com:linkorb/schemata.git'
+  url: 'git@github.com:linkorb/schemata.git'

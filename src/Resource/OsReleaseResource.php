@@ -15,7 +15,7 @@ class OsReleaseResource extends AbstractResource
     public function getHosts(): array
     {
         /** @var HostResource[] $hosts */
-        $hosts = $this->infra->getResourcesByType('Host');
+        $hosts = $this->graph->getResourcesByType('Host');
         $res = [];
         foreach ($hosts as $host) {
             if ($host->hasOsReleaseName($this->getName())) {
@@ -35,6 +35,10 @@ class OsReleaseResource extends AbstractResource
                 'description' => [
                     'type'        => Type::string(),
                     'description' => 'Description',
+                ],
+                'labels' => [
+                    'type'        => Type::listOf($graph->getType('Label')),
+                    'description' => 'Returns all labels',
                 ],
                 'displayName' => [
                     'type'        => Type::string(),

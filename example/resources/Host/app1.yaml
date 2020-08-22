@@ -3,8 +3,14 @@ kind: Host
 metadata:
   name: app1
   description: First cool application server
+  labels:
+    provider: aws
+    costPrice: $40
+    costFrequency: monthly
+
 spec:
   os: xenial
   publicIp: 192.168.1.1
   privateIp: 10.0.1.1
   hostGroups: prod-west, app
+  status: active

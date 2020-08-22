@@ -42,6 +42,10 @@ class DockerEngineResource extends AbstractResource
                     'type'        => Type::string(),
                     'description' => 'Description',
                 ],
+                'labels' => [
+                    'type'        => Type::listOf($graph->getType('Label')),
+                    'description' => 'Returns all labels',
+                ],
                 'address'     => [
                     'type'        => Type::string(),
                     'description' => 'Docker Engine IP address',

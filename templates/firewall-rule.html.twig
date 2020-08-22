@@ -9,6 +9,9 @@
     <h2>Template:</h2>
     <div><i>{{ record.template }}</i></div>
     <br>
+
+    {% include "chunk-labels.html.twig" %}
+
     <h3>Hosts: {{ record.hosts|length }}</h3>
     <ul>
         {% for host in record.hosts %}

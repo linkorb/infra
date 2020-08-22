@@ -1,12 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Host Group: {{ record.name }}</h1>
-    <p class="lead">{{ record.description }}</p>
+    <h1>Host Group: {{ resource.name }}</h1>
+    <p class="lead">{{ resource.description }}</p>
 
-    <h3>Hosts: {{ record.members|length }}</h3>
+    {% include "chunk-labels.html.twig" %}
+
+    <h3>Hosts: {{ resource.members|length }}</h3>
     <ul>
-        {% for member in record.members %}
+        {% for member in resource.members %}
             <li>
                 <a href="./hosts:{{ member.name }}.html">{{ member.name }}</a>
             </li>

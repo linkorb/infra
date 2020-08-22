@@ -70,7 +70,10 @@ class GitRepositoryResource extends AbstractResource
                 'sshUrl'              => Type::string(),
                 'httpUrl'             => Type::string(),
                 'viewUrl'             => Type::string(),
-
+                'labels' => [
+                    'type'        => Type::listOf($graph->getType('Label')),
+                    'description' => 'Returns all labels',
+                ],
             ],
         ];
     }

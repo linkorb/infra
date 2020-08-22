@@ -2,16 +2,19 @@
 
 {% block body %}
 
-    <h1>Repository: {{ record.owner }}/{{ record.name }}</h1>
+    <h1>Repository: {{ resource.name }}</h1>
     <dl class="dl-horizontal">
         <dt>Name</dt>
-        <dd>{{ record.name }}</dd>
+        <dd>{{ resource.name }}</dd>
         <dt>Owner</dt>
-        <dd>{{ record.owner }}</dd>
+        <dd>{{ resource.owner }}</dd>
         <dt>Description</dt>
-        <dd>{{ record.description }}</dd>
+        <dd>{{ resource.description }}</dd>
     </dl>
 
-    <a class="btn btn-secondary" href="{{ record.viewUrl }}" target="_blank">Open on GitHub</a>
-    <a class="btn btn-secondary" href="https://team.linkorb.com/repositories/{{ record.id }}" target="_blank">Open on HQ</a>
+    <a class="btn btn-secondary" href="{{ resource.viewUrl }}" target="_blank">Open on GitHub</a>
+    <a class="btn btn-secondary" href="https://team.linkorb.com/repositories/{{ resource.name }}" target="_blank">Open on HQ</a>
+    <hr />
+    {% include "chunk-labels.html.twig" %}
+
 {% endblock %}

@@ -3,6 +3,10 @@ kind: Host
 metadata:
   name: db1s
   description: Database slave in the db1 cluster
+  labels:
+    provider: digital-ocean
+    costPrice: $80
+    costFrequency: monthly
 spec:
   os: xenial
   publicIp: 192.168.2.2

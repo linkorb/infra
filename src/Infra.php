@@ -39,6 +39,7 @@ class Infra
         $graph->registerType(Resource\DockerAppResource::class);
         $graph->registerType(Resource\QueryResource::class);
         $graph->registerType(Resource\BackupRuleResource::class);
+        $graph->registerType(Resource\ServiceResource::class);
 
         $graph->init($this);
     }
@@ -151,5 +152,5 @@ class Infra
         unlink($tmpfile);
     }
 
-    
+
 }
