@@ -64,23 +64,13 @@ function prepareDirectory()
 
 function prepareClient()
 {
-    $username = getenv('GITHUB_USERNAME');
-    if (false === $username) {
-        throw new \RuntimeException("No 'GITHUB_USERNAME' environment variable provided. Please check Config.");
-    }
-
-    $secret = getenv('GITHUB_SECRET');
-    if (false === $secret) {
-        throw new \RuntimeException("No 'GITHUB_SECRET' environment variable provided. Please check Config.");
-    }
-
-    $authMethod = getenv('GITHUB_AUTH_METHOD');
-    if (false === $authMethod) {
-        throw new \RuntimeException("No 'GITHUB_AUTH_METHOD' environment variable provided. Please check Config.");
+    $token = getenv('GITHUB_TOKEN');
+    if (false === $token) {
+        throw new \RuntimeException("No 'GITHUB_TOKEN' environment variable provided. Please check Config.");
     }
 
     $client = new Client();
-    $client->authenticate($username, $secret, $authMethod);
+    $client->authenticate($token, 'http_token');
 
     return $client;
 }
