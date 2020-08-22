@@ -4,12 +4,16 @@
 use Infra\Sdk\Utils;
 use Infra\Service\HtmlGeneratorService;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+$baseDir = __DIR__ . '/../../';
+if (!file_exists($baseDir . 'composer.json')) {
+  $baseDir = __DIR__ . '/../../../../../'; // run as a composer dependency
+}
+require_once $baseDir . 'vendor/autoload.php';
 
 $args = Utils::getArguments(__FILE__);
 
 $generator = new HtmlGeneratorService(
-    __DIR__ . '/../../doc/html/'
+  $baseDir . 'public/'
 );
 
 $generator->checkDirectory();
